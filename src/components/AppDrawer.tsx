@@ -20,7 +20,7 @@ import { useNavigate } from 'react-router-dom';
 // import { ReactComponent as Form } from '../assets/form.svg';
 
 
-const drawerWidth = 240;
+const drawerWidth = '20%';
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
@@ -65,8 +65,8 @@ const AppBar = styled(MuiAppBar, {
     duration: theme.transitions.duration.leavingScreen,
   }),
   ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
+    marginLeft: `${drawerWidth}`,
+    width: `calc(100% - ${drawerWidth})`,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -91,17 +91,20 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-export default function AppDrawer() {
+export default function AppDrawer(props) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
+  const { onChange }= props;
 
   const handleDrawerOpen = () => {
     setOpen(true);
+    onChange(true);
   };
 
   const handleDrawerClose = () => {
     setOpen(false);
+    onChange(false);
   };
 
   return (

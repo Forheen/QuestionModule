@@ -2,6 +2,7 @@ export const handleAddQuestion = (questions, setQuestions) => {
     setQuestions([
         ...questions,
         { question: "", type: "text", options: [], subQuestions: [] },
+        
     ]);
 };
 
@@ -17,7 +18,7 @@ export const handleAddSubQuestion = (index, questions, setQuestions) => {
         type: "text",
         options: [],
     });
-    
+
     setQuestions(newQuestions);
 
 };

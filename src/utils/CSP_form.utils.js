@@ -18,6 +18,7 @@ export const handleAddSubQuestion = (index, questions, setQuestions) => {
         options: [],
     });
     setQuestions(newQuestions);
+    
 };
 
 export const handleDeleteSubQuestion = (questionIndex, subQuestionIndex, questions, setQuestions) => {

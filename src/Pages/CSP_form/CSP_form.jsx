@@ -1,331 +1,601 @@
 import React, { useState, useEffect } from "react";
 import AppDrawer from "../../components/AppDrawer";
-import "./CSP_form.css";
+import "./CSP_form.css"; // Assuming the styles are in this file
 import "bootstrap/dist/css/bootstrap.min.css";
-import {
-  handleAddQuestion,
-  handleDeleteQuestion,
-  handleAddSubQuestion,
-  handleDeleteSubQuestion,
-  handleAddOption,
-  handleAddSubOption,
-  handleDeleteOption,
-  handleDeleteSubOption,
-  handleFormCreate,
-  handleOptionChange,
-  handleQuestionChange,
-  handleQuestionTypeChange,
-  handleSubOptionChange,
-  handleSubQuestionChange,
-  handleSubQuestionTypeChange,
-} from "../../utils/CSP_form.utils";
 
 function CSP_form() {
   const [State, setState] = useState(false);
+
+  // Initialize questions from localStorage or default to an empty array
   const [questions, setQuestions] = useState(() => {
     const savedQuestions = localStorage.getItem("questions");
     return savedQuestions
       ? JSON.parse(savedQuestions)
       : [{ question: "", type: "text", options: [], subQuestions: [] }];
   });
-  const [isQuestion, setIsQuestion] = useState(false);
-
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-  const toggleDrawer = () => {
-    setIsDrawerOpen(!isDrawerOpen);
-  };
 
   useEffect(() => {
     localStorage.setItem("questions", JSON.stringify(questions));
   }, [questions]);
 
-  useEffect(() => {
-    if (questions.length === 0) {
-      setIsQuestion(false);
-    } else {
-      setIsQuestion(true);
-    }
-  }, [questions]);
+  // Handles changing the number of options for a main question
+  const handleOptionCountChange = (qIndex, e) => {
+    const optionCount = parseInt(e.target.value, 10);
+    if (isNaN(optionCount) || optionCount < 1) return;
+
+    setQuestions((prevQuestions) => {
+      const newQuestions = [...prevQuestions];
+      const currentQuestion = { ...newQuestions[qIndex] };
+
+      currentQuestion.options = Array(optionCount)
+        .fill("")
+        .map((opt, idx) => currentQuestion.options[idx] || "");
+
+      currentQuestion.subQuestions = Array(optionCount)
+        .fill()
+        .map((_, idx) => currentQuestion.subQuestions[idx] || []);
+
+      newQuestions[qIndex] = currentQuestion;
+      return newQuestions;
+    });
+  };
+
+  // Adds a subquestion to a specific option
+  const handleAddSubQuestion = (qIndex, oIndex) => {
+    setQuestions((prevQuestions) => {
+      const newQuestions = [...prevQuestions];
+
+      if (!newQuestions[qIndex].subQuestions[oIndex]) {
+        newQuestions[qIndex].subQuestions[oIndex] = [];
+      }
+
+      const subQuestionsArray = newQuestions[qIndex].subQuestions[oIndex];
+
+      if (
+        subQuestionsArray.length === 0 ||
+        subQuestionsArray.every((sq) => sq.subQuestion.trim() !== "")
+      ) {
+        subQuestionsArray.push({
+          subQuestion: "",
+          type: "text",
+          options: [],
+        });
+      }
+
+      return newQuestions;
+    });
+  };
+
+  // Handles deleting a specific subquestion
+  const handleDeleteSubQuestion = (qIndex, oIndex, sIndex) => {
+    setQuestions((prevQuestions) => {
+      const newQuestions = [...prevQuestions];
+      const currentSubQuestions = [
+        ...newQuestions[qIndex].subQuestions[oIndex],
+      ];
+
+      const updatedSubQuestions = currentSubQuestions.filter(
+        (_, index) => index !== sIndex
+      );
+
+      newQuestions[qIndex].subQuestions[oIndex] =
+        updatedSubQuestions.length > 0 ? updatedSubQuestions : [];
+
+      return newQuestions;
+    });
+  };
+
+  // Handles changing the number of options for a subquestion
+  const handleSubQuestionOptionCountChange = (qIndex, oIndex, sIndex, e) => {
+    const optionCount = parseInt(e.target.value, 10);
+    if (isNaN(optionCount) || optionCount < 1) return;
+
+    setQuestions((prevQuestions) => {
+      const newQuestions = [...prevQuestions];
+      const currentSubQuestions = [
+        ...newQuestions[qIndex].subQuestions[oIndex],
+      ];
+      const currentSubQuestion = { ...currentSubQuestions[sIndex] };
+
+      currentSubQuestion.options = Array(optionCount)
+        .fill("")
+        .map((opt, idx) => currentSubQuestion.options[idx] || "");
+
+      currentSubQuestions[sIndex] = currentSubQuestion;
+      newQuestions[qIndex].subQuestions[oIndex] = currentSubQuestions;
+      return newQuestions;
+    });
+  };
+
+  // Handles adding an option to a subquestion
+  const handleAddOptionToSubQuestion = (qIndex, oIndex, sIndex) => {
+    setQuestions((prevQuestions) => {
+      const newQuestions = [...prevQuestions];
+      const currentSubQuestions = [
+        ...newQuestions[qIndex].subQuestions[oIndex],
+      ];
+      const currentSubQuestion = { ...currentSubQuestions[sIndex] };
+
+      currentSubQuestion.options = [...currentSubQuestion.options, ""];
+
+      currentSubQuestions[sIndex] = currentSubQuestion;
+      newQuestions[qIndex].subQuestions[oIndex] = currentSubQuestions;
+      return newQuestions;
+    });
+  };
+
+  // Handles deleting an option from a subquestion
+  const handleDeleteOptionFromSubQuestion = (
+    qIndex,
+    oIndex,
+    sIndex,
+    optIndex
+  ) => {
+    setQuestions((prevQuestions) => {
+      const newQuestions = [...prevQuestions];
+      const currentSubQuestions = [
+        ...newQuestions[qIndex].subQuestions[oIndex],
+      ];
+      const currentSubQuestion = { ...currentSubQuestions[sIndex] };
+
+      const updatedOptions = currentSubQuestion.options.filter(
+        (_, index) => index !== optIndex
+      );
+
+      currentSubQuestion.options = updatedOptions;
+
+      currentSubQuestions[sIndex] = currentSubQuestion;
+      newQuestions[qIndex].subQuestions[oIndex] = currentSubQuestions;
+      return newQuestions;
+    });
+  };
+
+  // Handles adding a new question
+  const addQuestion = () => {
+    setQuestions((prevQuestions) => [
+      ...prevQuestions,
+      { question: "", type: "text", options: [], subQuestions: [] },
+    ]);
+  };
+
+  // Handles deleting a specific question
+  const handleDeleteQuestion = (qIndex) => {
+    setQuestions((prevQuestions) =>
+      prevQuestions.filter((_, index) => index !== qIndex)
+    );
+  };
+
+  // Handles changing the main question text
+  const handleQuestionChange = (qIndex, e) => {
+    const { value } = e.target;
+    setQuestions((prevQuestions) => {
+      const newQuestions = [...prevQuestions];
+      newQuestions[qIndex] = { ...newQuestions[qIndex], question: value };
+      return newQuestions;
+    });
+  };
+
+  // Handles changing the question type
+  const handleQuestionTypeChange = (qIndex, e) => {
+    const { value } = e.target;
+    setQuestions((prevQuestions) => {
+      const newQuestions = [...prevQuestions];
+      const currentQuestion = { ...newQuestions[qIndex], type: value };
+
+      if (value === "options" && !currentQuestion.options.length) {
+        currentQuestion.options = [""];
+        currentQuestion.subQuestions = [[]];
+      } else if (value !== "options") {
+        currentQuestion.options = [];
+        currentQuestion.subQuestions = [];
+      }
+
+      newQuestions[qIndex] = currentQuestion;
+      return newQuestions;
+    });
+  };
+
+  // Handles changing the option text
+  const handleOptionChange = (qIndex, oIndex, e) => {
+    const { value } = e.target;
+    setQuestions((prevQuestions) => {
+      const newQuestions = [...prevQuestions];
+      const currentOptions = [...newQuestions[qIndex].options];
+      currentOptions[oIndex] = value;
+      newQuestions[qIndex] = {
+        ...newQuestions[qIndex],
+        options: currentOptions,
+      };
+      return newQuestions;
+    });
+  };
+
+  // Handles changing the subquestion text
+  const handleSubQuestionChange = (qIndex, oIndex, sIndex, e) => {
+    const { value } = e.target;
+    setQuestions((prevQuestions) => {
+      const newQuestions = [...prevQuestions];
+      const currentSubQuestions = [
+        ...newQuestions[qIndex].subQuestions[oIndex],
+      ];
+      currentSubQuestions[sIndex] = {
+        ...currentSubQuestions[sIndex],
+        subQuestion: value,
+      };
+      newQuestions[qIndex].subQuestions[oIndex] = currentSubQuestions;
+      return newQuestions;
+    });
+  };
+
+  // Handles changing the subquestion type
+  const handleSubQuestionTypeChange = (qIndex, oIndex, sIndex, e) => {
+    const { value } = e.target;
+    setQuestions((prevQuestions) => {
+      const newQuestions = [...prevQuestions];
+      const currentSubQuestions = [
+        ...newQuestions[qIndex].subQuestions[oIndex],
+      ];
+      currentSubQuestions[sIndex] = {
+        ...currentSubQuestions[sIndex],
+        type: value,
+      };
+      newQuestions[qIndex].subQuestions[oIndex] = currentSubQuestions;
+      return newQuestions;
+    });
+  };
+
+  // Placeholder for form creation logic
+  const handleFormCreate = () => {
+    console.log("Form Created with Questions:", questions);
+  };
 
   return (
-    <>
-      <div className="main">
-        <AppDrawer onChange={setState}></AppDrawer>
+    <div className="main">
+      <div
+        className="outerContainer"
+        style={{ marginLeft: State === true ? "20%" : 0 }}
+      >
+        <AppDrawer onChange={setState} />
+        <div className="innerContainer">
+          <div div className="questionDetails">
+            <div className="questionDiv">
+              <input className="text" type="text" placeholder="Name : " />
+            </div>
+            <div className="questionDiv">
+              <input className="text" type="number" placeholder="Version : " />
+            </div>
+          </div>
 
-        <div
-          className="outerContainer"
-          style={{ marginLeft: State === true ? "20%" : 0 }}
-        >
-          <div className="innerContainer">
-            <div className="questionDiv">
-              <h1 style={{ fontSize: 20 }}>1. Add form name : </h1>
-              <input type="text" placeholder="Enter form name"></input>
-            </div>
-            <div className="questionDiv">
-              <h1 style={{ fontSize: 20 }}>2. Add form version : </h1>
-              <input type="number" placeholder="Enter version"></input>
-            </div>
-            <div className="questionDiv" style={{ width: "90%" }}>
-              <h1 style={{ fontSize: 20 }}>3. Add Questions : </h1>
-              <div style={{}}>
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  onClick={() => handleAddQuestion(questions, setQuestions)}
-                >
-                  Add Question
-                </button>
-              </div>
-            </div>
-            {questions.map((question, index) => (
-              <div key={index} style={{ marginTop: "1%" }}>
-                <h3 style={{ fontSize: 25 }}>Question {index + 1}</h3>
-                <div>
+          {questions.length > 0 ? (
+            questions.map((question, qIndex) => (
+              <div key={qIndex} className="questionBlock">
+                <div className="questionBox">
+                  <div className="questionIndex">
+                    <h3 className="questionHeader">{qIndex + 1}</h3>
+                  </div>
                   <div className="question">
                     <input
                       className="questionInput"
                       type="text"
-                      placeholder={`Question ${index + 1}`}
+                      placeholder={`Question ${qIndex + 1}`}
                       value={question.question}
-                      onChange={(e) =>
-                        handleQuestionChange(index, e, questions, setQuestions)
-                      }
+                      onChange={(e) => handleQuestionChange(qIndex, e)}
                     />
-                    <select
-                      className="option"
-                      value={question.type}
-                      onChange={(e) =>
-                        handleQuestionTypeChange(
-                          index,
-                          e,
-                          questions,
-                          setQuestions
-                        )
-                      }
-                    >
-                      <option value="text">Text</option>
-                      <option value="yesno">Yes/No</option>
-                      <option value="image">Image</option>
-                      <option value="options">Options</option>
-                    </select>
+                    <div className="optionBoxOrganised">
+                      <div className="questionType">
+                        <h4 style={{ fontSize: "18px", marginTop: "3px" }}>
+                          Question type
+                        </h4>
+                      </div>
+                      <select
+                        className="option"
+                        value={question.type}
+                        onChange={(e) => handleQuestionTypeChange(qIndex, e)}
+                      >
+                        <option value="text">Text</option>
+                        <option value="options">Options</option>
+                        <option value="Yes/No">Yes/No</option>
+                        <option value="Image">Image</option>
+                      </select>
+                      {question.type === "options" && (
+                        <input
+                          className="optionCount"
+                          type="number"
+                          placeholder="Number of Options"
+                          onChange={(e) => handleOptionCountChange(qIndex, e)}
+                        />
+                      )}
+                    </div>
                   </div>
-
-                  <button
-                    type="button"
-                    class="btn btn-danger mx-2 "
-                    onClick={() =>
-                      handleDeleteQuestion(index, questions, setQuestions)
-                    }
-                  >
-                    Delete
-                  </button>
-
-                  <button
-                    type="button"
-                    class="btn btn-success"
-                    onClick={() =>
-                      handleAddSubQuestion(index, questions, setQuestions)
-                    }
-                  >
-                    Add Subquestion
-                  </button>
+                  <div className="icon">
+                    <img
+                      style={{ width: "30px", height: "30px" }}
+                      src="../public/trash.png"
+                      onClick={() => handleDeleteQuestion(qIndex)}
+                    ></img>
+                  </div>
                 </div>
 
                 {question.type === "options" && (
-                  <div className="questionOptionBox">
-                    {question.options.map((option, optionIndex) => (
-                      <div className="questionOptionItem" key={optionIndex}>
-                        <h1 style={{ fontSize: 20, marginRight: "2%" }}>
-                          {optionIndex + 1}
-                        </h1>
-                        <input
-                          className="questionOptionInput"
-                          type="text"
-                          placeholder={`Option ${optionIndex + 1}`}
-                          value={option}
-                          onChange={(e) =>
-                            handleOptionChange(
-                              index,
-                              optionIndex,
-                              e,
-                              questions,
-                              setQuestions
-                            )
-                          }
-                        />
-                        <button
-                          type="button"
-                          class="btn btn-danger mx-2 "
-                          onClick={() =>
-                            handleDeleteOption(
-                              index,
-                              optionIndex,
-                              questions,
-                              setQuestions
-                            )
-                          }
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    ))}
-
-                    <button
-                      type="button"
-                      class="btn btn-info my-3 mx-4"
-                      onClick={() =>
-                        handleAddOption(index, questions, setQuestions)
-                      }
-                    >
-                      Add Option
-                    </button>
-                  </div>
-                )}
-
-                {question.subQuestions.map((subQuestion, subIndex) => (
-                  <div
-                    key={subIndex}
-                    style={{ marginLeft: "20px", marginTop: "10px" }}
-                  >
-                    <h4>
-                      Subquestion {index + 1}.{subIndex + 1}
-                    </h4>
-                    <div className="subquestion">
-                      <input
-                        type="text"
-                        placeholder={`Subquestion ${index + 1}.${subIndex + 1}`}
-                        value={subQuestion.subQuestion}
-                        onChange={(e) =>
-                          handleSubQuestionChange(
-                            index,
-                            subIndex,
-                            e,
-                            questions,
-                            setQuestions
-                          )
-                        }
-                        style={{
-                          width: "30rem",
-                          padding: ".5%",
-                          borderRadius: 10,
-                        }}
-                      />
-                      <select
-                        className="option"
-                        style={{ padding: ".5%" }}
-                        value={subQuestion.type}
-                        onChange={(e) =>
-                          handleSubQuestionTypeChange(
-                            index,
-                            subIndex,
-                            e,
-                            questions,
-                            setQuestions
-                          )
-                        }
-                      >
-                        <option value="text">Text</option>
-                        <option value="yesno">Yes/No</option>
-                        <option value="image">Image</option>
-                        <option value="options">Options</option>
-                      </select>
-                    </div>
-                    <button
-                      type="button"
-                      class="btn btn-danger mx-2 my-2 "
-                      onClick={() =>
-                        handleDeleteSubQuestion(
-                          index,
-                          subIndex,
-                          questions,
-                          setQuestions
-                        )
-                      }
-                    >
-                      Delete
-                    </button>
-
-                    {subQuestion.type === "options" && (
-                      <div className="subquestionOptionBox">
-                        {subQuestion.options.map((option, optionIndex) => (
-                          <div
-                            className="subquestionOptionItem"
-                            key={optionIndex}
-                          >
-                            <h1 style={{ fontSize: 20, marginRight: "2%" }}>
-                              {optionIndex + 1}
-                            </h1>
+                  <>
+                    {question.options.map((option, oIndex) => (
+                      <div key={oIndex} className="optionBlock">
+                        <div className="optionBoxExtended">
+                          <div className="optionBox">
                             <input
-                              className="subquestionOptionInput"
+                              className="questionInput"
                               type="text"
-                              placeholder={`Option ${optionIndex + 1}`}
+                              placeholder={`Option ${oIndex + 1}`}
                               value={option}
                               onChange={(e) =>
-                                handleSubOptionChange(
-                                  index,
-                                  subIndex,
-                                  optionIndex,
-                                  e,
-                                  questions,
-                                  setQuestions
-                                )
+                                handleOptionChange(qIndex, oIndex, e)
                               }
                             />
-
-                            <button
-                              type="button"
-                              class="btn btn-danger mx-2 "
+                            <div
+                              className="questionType"
+                              style={{ marginBottom: "2%" }}
                               onClick={() =>
-                                handleDeleteSubOption(
-                                  index,
-                                  subIndex,
-                                  optionIndex,
-                                  questions,
-                                  setQuestions
-                                )
+                                handleAddSubQuestion(qIndex, oIndex)
                               }
                             >
-                              Delete
-                            </button>
-                          </div>
-                        ))}
+                              <h4
+                                style={{ fontSize: "18px", marginTop: "3px" }}
+                              >
+                                Add Sub Question
+                              </h4>
+                            </div>
+                            {question.subQuestions[oIndex] &&
+                              question.subQuestions[oIndex].map(
+                                (subQuestion, sIndex) => (
+                                  <div
+                                    key={sIndex}
+                                    className="subQuestionBlock"
+                                  >
+                                    <div className="subQuestionBox">
+                                      <div className="subQuestionIndex">
+                                        <h3 className="questionHeader">
+                                          {sIndex + 1}
+                                        </h3>
+                                      </div>
+                                      <input
+                                        className="questionInput"
+                                        style={{ width: "80%" }}
+                                        type="text"
+                                        placeholder={`Subquestion ${
+                                          sIndex + 1
+                                        }`}
+                                        value={subQuestion.subQuestion}
+                                        onChange={(e) =>
+                                          handleSubQuestionChange(
+                                            qIndex,
+                                            oIndex,
+                                            sIndex,
+                                            e
+                                          )
+                                        }
+                                      />
+                                      <div
+                                        className="icon"
+                                        style={{
+                                          margin: "0",
+                                          width: "45px",
+                                          height: "45px",
+                                        }}
+                                      >
+                                        <img
+                                          style={{
+                                            width: "30px",
+                                            height: "30px",
+                                          }}
+                                          src="../public/trash.png"
+                                          onClick={() =>
+                                            handleDeleteSubQuestion(
+                                              qIndex,
+                                              oIndex,
+                                              sIndex
+                                            )
+                                          }
+                                        ></img>
+                                      </div>
+                                    </div>
 
-                        <button
-                          type="button"
-                          class="btn btn-info my-3 mx-4"
-                          onClick={() =>
-                            handleAddSubOption(
-                              index,
-                              subIndex,
-                              questions,
-                              setQuestions
-                            )
-                          }
-                        >
-                          Add Option
-                        </button>
+                                    <div className="subQuestionOptionBox">
+                                      <input
+                                        placeholder="Type"
+                                        className="disableInput"
+                                        style={{ paddingLeft: "10%" }}
+                                        disabled
+                                      ></input>
+                                      <select
+                                        className="option"
+                                        value={subQuestion.type}
+                                        onChange={(e) =>
+                                          handleSubQuestionTypeChange(
+                                            qIndex,
+                                            oIndex,
+                                            sIndex,
+                                            e
+                                          )
+                                        }
+                                      >
+                                        <option value="text">Text</option>
+                                        <option value="options">Options</option>
+                                        <option value="Yes/No">Yes/No</option>
+                                        <option value="Image">Image</option>
+                                      </select>
+                                      {subQuestion.type === "options" && (
+                                        <input
+                                          className="optionCount"
+                                          type="number"
+                                          placeholder="Number of Options"
+                                          onChange={(e) =>
+                                            handleSubQuestionOptionCountChange(
+                                              qIndex,
+                                              oIndex,
+                                              sIndex,
+                                              e
+                                            )
+                                          }
+                                        />
+                                      )}
+                                    </div>
+
+                                    <div className="subOptionHandle">
+                                      {subQuestion.type === "options" && (
+                                        <>
+                                          {subQuestion.options.map(
+                                            (opt, optIndex) => (
+                                              <div
+                                                key={optIndex}
+                                                className="optionBlock"
+                                              >
+                                                <div className="subOptionExtended">
+                                                  <input
+                                                    className="questionInput"
+                                                    type="text"
+                                                    style={{ width: "30%" }}
+                                                    placeholder={`Sub-Option ${
+                                                      optIndex + 1
+                                                    }`}
+                                                    value={opt}
+                                                    onChange={(e) => {
+                                                      const updatedOptions = [
+                                                        ...subQuestion.options,
+                                                      ];
+                                                      updatedOptions[optIndex] =
+                                                        e.target.value;
+                                                      handleAddOptionToSubQuestion(
+                                                        qIndex,
+                                                        oIndex,
+                                                        sIndex
+                                                      );
+                                                      setQuestions(
+                                                        (prevQuestions) => {
+                                                          const newQuestions = [
+                                                            ...prevQuestions,
+                                                          ];
+                                                          newQuestions[
+                                                            qIndex
+                                                          ].subQuestions[
+                                                            oIndex
+                                                          ][sIndex].options =
+                                                            updatedOptions;
+                                                          return newQuestions;
+                                                        }
+                                                      );
+                                                    }}
+                                                  />
+                                                  <div
+                                                    className="icon"
+                                                    style={{
+                                                      marginLeft: "1%",
+                                                      width: "45px",
+                                                      height: "45px",
+                                                    }}
+                                                  >
+                                                    <img
+                                                      style={{
+                                                        width: "30px",
+                                                        height: "30px",
+                                                      }}
+                                                      src="../public/trash.png"
+                                                      onClick={() =>
+                                                        handleDeleteOptionFromSubQuestion(
+                                                          qIndex,
+                                                          oIndex,
+                                                          sIndex,
+                                                          optIndex
+                                                        )
+                                                      }
+                                                    ></img>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            )
+                                          )}
+                                        </>
+                                      )}
+                                    </div>
+                                  </div>
+                                )
+                              )}
+                          </div>
+                          <div className="icon">
+                            <img
+                              style={{ width: "30px", height: "30px" }}
+                              src="../public/trash.png"
+                              onClick={() => {
+                                setQuestions((prevQuestions) => {
+                                  const newQuestions = [...prevQuestions];
+                                  const currentOptions = [
+                                    ...newQuestions[qIndex].options,
+                                  ];
+                                  currentOptions.splice(oIndex, 1);
+                                  newQuestions[qIndex] = {
+                                    ...newQuestions[qIndex],
+                                    options: currentOptions,
+                                  };
+                                  return newQuestions;
+                                });
+                              }}
+                            ></img>
+                          </div>
+                        </div>
                       </div>
-                    )}
-                  </div>
-                ))}
+                    ))}
+                  </>
+                )}
               </div>
-            ))}
-            {!isQuestion || (
-              <div className="btnDiv">
-                <button
-                  type="button"
-                  class="btn btn-dark"
-                  onClick={handleFormCreate}
-                >
-                  Create Form
-                </button>
-              </div>
-            )}
+            ))
+          ) : (
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+                marginBottom: "4%",
+                marginTop: "4%",
+              }}
+            >
+              <p>No questions available. Please add some questions.</p>
+            </div>
+          )}
+
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              marginBottom: "4%",
+              marginTop: "4%",
+            }}
+          >
+            <img
+              style={{ width: "45px", height: "45px" }}
+              src="/public/add.png"
+              onClick={addQuestion}
+            ></img>
+          </div>
+
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              paddingBottom: "10%",
+            }}
+          >
+            <button
+              className="btn btn-success"
+              style={{ width: "20%" }}
+              onClick={handleFormCreate}
+            >
+              Create Form
+            </button>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

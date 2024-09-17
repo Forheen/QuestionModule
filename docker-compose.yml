@@ -1,21 +1,11 @@
-
-# services:
-#   vite-react-app:
-#     build: .
-#     ports:
-#       - "8080:8080" # Vite dev server
-#     volumes:
-#       - .:/app       # Mount current directory to /app in the container
-#       - /app/node_modules # Ensure node_modules are not overwritten
-#     stdin_open: true
-#     tty: true
-
 services:
   vite-react-app:
     build: .
     ports:
-      - "8080:8080"
+      - "8080:8080"   #you can chnage it if you want to use another port
     volumes:
       - .:/app
       - /app/node_modules
     command: npm run dev
+
+#Vite default port is 5173

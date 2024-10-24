@@ -156,6 +156,32 @@ export const handleQuestionChange = (qIndex, e, setQuestions) => {
 };
 
 
+// export const handleQuestionTypeChange = (qIndex, e, setQuestions) => {
+//     const { value } = e.target;
+//     setQuestions((prevQuestions) => {
+//         const newQuestions = [...prevQuestions];
+//         const currentQuestion = { ...newQuestions[qIndex], type: value };
+
+//         if (value === "options") {
+//             // Handle regular options type
+//             currentQuestion.options = [""];
+//             currentQuestion.subQuestions = [[]];
+//         } else if (value === "Yes/No") {
+//             // Set Yes/No options
+//             currentQuestion.options = ["", ""];
+
+//             // Create 1 subquestion for each option
+//             currentQuestion.subQuestions = [[{}], [{}]];
+//         } else {
+//             currentQuestion.options = [];
+//             currentQuestion.subQuestions = [];
+//         }
+
+//         newQuestions[qIndex] = currentQuestion;
+//         return newQuestions;
+//     });
+// };
+
 export const handleQuestionTypeChange = (qIndex, e, setQuestions) => {
     const { value } = e.target;
     setQuestions((prevQuestions) => {
@@ -169,9 +195,7 @@ export const handleQuestionTypeChange = (qIndex, e, setQuestions) => {
         } else if (value === "Yes/No") {
             // Set Yes/No options
             currentQuestion.options = ["", ""];
-
-            // Create 1 subquestion for each option
-            currentQuestion.subQuestions = [[{}], [{}]];
+            currentQuestion.subQuestions = [[], []]; // Allow multiple subquestions for Yes/No
         } else {
             currentQuestion.options = [];
             currentQuestion.subQuestions = [];
@@ -181,6 +205,10 @@ export const handleQuestionTypeChange = (qIndex, e, setQuestions) => {
         return newQuestions;
     });
 };
+
+
+
+
 
 
 export const handleOptionChange = (qIndex, oIndex, e, setQuestions) => {

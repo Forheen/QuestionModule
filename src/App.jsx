@@ -12,7 +12,7 @@ function App() {
     <BrowserRouter>
     <Routes>
       {/* <Route path='/' Component={Home}/> */}
-      <Route  path='/csp' Component={CSP_form}/>
+      <Route  path='/' Component={CSP_form}/>
     </Routes>
     </BrowserRouter>
   )

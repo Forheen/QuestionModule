@@ -86,18 +86,77 @@ function CSP_form() {
     localStorage.setItem("questions", JSON.stringify(questions));
   }, [questions]);
 
+  // const submitForm = async () => {
+  //   const formPayload = {
+  //     name: formName,
+  //     description: "A survey to check the APIs",
+  //     version: formVersion,
+  //     status: "active",
+  //     questions: questions.map((q) => ({
+  //       question_text: q.question,
+  //       type: q.type === "options" ? "Choice" : "Text",
+  //       is_choice: q.type === "options",
+  //       choices:
+  //         q.type === "options"
+  //           ? q.options.map((opt, oIndex) => ({
+  //               choice_text: opt,
+  //               score: oIndex === 0 ? 5 : 2, // Example scoring
+  //               subquestions: q.subQuestions[oIndex]?.map((subQ) => ({
+  //                 question_text: subQ.subQuestion,
+  //                 type: subQ.type === "options" ? "Choice" : "Text",
+  //                 is_choice: subQ.type === "options",
+  //               })),
+  //             }))
+  //           : undefined,
+  //     })),
+  //   };
+
+  //   try {
+  //     const response = await fetch("http://testinterns.drishtee.in/forms/createform", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(formPayload),
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error("Failed to submit the form");
+  //     }
+
+  //     const result = await response.json();
+  //     console.log("Form submitted successfully:", result);
+  //     alert("Submitted");
+  //   } catch (error) {
+  //     console.error("Error submitting the form:", error);
+  //     alert("Falied");
+  //   }
+  // };
+
   const submitForm = async () => {
     const formPayload = {
       name: formName,
       description: "A survey to check the APIs",
       version: formVersion,
       status: "active",
-      questions: questions.map((q) => ({
-        question_text: q.question,
-        type: q.type === "options" ? "Choice" : "Text",
-        is_choice: q.type === "options",
-        choices:
-          q.type === "options"
+      questions: questions.map((q) => {
+        // Determine question type (Yes/No, Options, or Text)
+        const isYesNo = q.type === "Yes/No";
+        const isOptions = q.type === "options";
+  
+        // Handle Choices (for Yes/No or Options)
+        const choices =
+          isYesNo
+            ? ["Yes", "No"].map((option, oIndex) => ({
+                choice_text: option,
+                score: oIndex === 0 ? 5 : 2, // Example scoring for Yes/No
+                subquestions: q.subQuestions[oIndex]?.map((subQ) => ({
+                  question_text: subQ.subQuestion,
+                  type: subQ.type === "options" ? "Choice" : "Text",
+                  is_choice: subQ.type === "options",
+                })),
+              }))
+            : isOptions
             ? q.options.map((opt, oIndex) => ({
                 choice_text: opt,
                 score: oIndex === 0 ? 5 : 2, // Example scoring
@@ -107,10 +166,17 @@ function CSP_form() {
                   is_choice: subQ.type === "options",
                 })),
               }))
-            : undefined,
-      })),
+            : undefined; // No choices for Text type
+  
+        return {
+          question_text: q.question,
+          type: isOptions || isYesNo ? "Choice" : "Text",
+          is_choice: isOptions || isYesNo,
+          choices: choices,
+        };
+      }),
     };
-
+  
     try {
       const response = await fetch("http://testinterns.drishtee.in/forms/createform", {
         method: "POST",
@@ -119,19 +185,22 @@ function CSP_form() {
         },
         body: JSON.stringify(formPayload),
       });
-
+  
       if (!response.ok) {
         throw new Error("Failed to submit the form");
       }
-
+  
       const result = await response.json();
       console.log("Form submitted successfully:", result);
-      alert("Submitted");
+      alert("Form Submitted successfully!!");
     } catch (error) {
       console.error("Error submitting the form:", error);
-      alert("Falied");
+      alert("Error occured");
     }
   };
+  
+
+
 
   return (
     <div className="main">

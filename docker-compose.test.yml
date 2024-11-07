@@ -9,18 +9,18 @@ services:
     command:
       - --api.insecure=true
       - --providers.docker=true
-      - --entrypoints.web.address=:8082  # Changed to use port 8080 instead of 80
-      - --entrypoints.websecure.address=:443
+      - --entrypoints.web.address=:8082  # Traefik entrypoint for HTTP requests
+      - --entrypoints.websecure.address=:443  # HTTPS entrypoint (if needed)
     ports:
-      - "8082:8082"  # Map 8080 on host to 8080 in Traefik
-      - "8081:8081"
+      - "8082:8082"  # Expose 8082 externally to map to Traefik’s web entry point
+      - "8081:8081"  # Expose 8081 for the Traefik dashboard
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock  # Allows Traefik to listen to Docker events
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api.rule=Host(`traefik.localhost`)"
       - "traefik.http.routers.api.service=api@internal"
-      - "traefik.http.services.api.loadbalancer.server.port=8080"
+      - "traefik.http.services.api.loadbalancer.server.port=8081"  # Adjust for Traefik dashboard
 
   # Question Module Dashboard
   question_module_dashboard:
@@ -33,6 +33,11 @@ services:
       - /app/node_modules
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.qmms.rule=Host(172.203.223.45)"
-      - "traefik.http.routers.qmms.entrypoints=web"  # Use the 'web' entry point created above (on port 8080)
-      - "traefik.http.services.qmms.loadbalancer.server.port=8081"  # Adjust if the app runs on a different port inside the container
+      - "traefik.http.routers.qmms.rule=Host(`172.203.223.45`)"  # Host IP for accessing the service
+      - "traefik.http.routers.qmms.entrypoints=web"  # Traefik web entry point (maps to :8082)
+      - "traefik.http.services.qmms.loadbalancer.server.port=8081"  # Adjust to match exposed port in Dockerfile
+
+networks:
+  default:
+    name: traefik-network
+    driver: bridge

@@ -1,6 +1,16 @@
 version: '3.8'
 
 services:
+  # Nginx Reverse Proxy to forward from port 80 to 8082
+  nginx-proxy:
+    image: nginx:latest
+    container_name: nginx-proxy
+    restart: always
+    ports:
+      - "80:80"  # Expose port 80 on the host and forward it to Nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro  # Mount the custom Nginx config file
+
   # Traefik reverse proxy setup
   traefik:
     image: traefik:v2.9

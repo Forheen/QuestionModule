@@ -13,7 +13,7 @@ services:
       - --entrypoints.websecure.address=:443  # Optional if HTTPS is needed
     ports:
       - "8082:8082"                          # Map Traefik's HTTP traffic to 8082 on the host
-      - "443:443"                           # Optional HTTPS
+      - "8443:443"                           # Optional HTTPS
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:

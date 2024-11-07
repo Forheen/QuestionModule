@@ -35,4 +35,4 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.qmms.rule=Host(172.203.223.45)"
       - "traefik.http.routers.qmms.entrypoints=web"  # Use the 'web' entry point created above (on port 8080)
-      - "traefik.http.services.qmms.loadbalancer.server.port=3000"  # Adjust if the app runs on a different port inside the container
+      - "traefik.http.services.qmms.loadbalancer.server.port=8081"  # Adjust if the app runs on a different port inside the container

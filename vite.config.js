@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import svgr from "vite-plugin-svgr";
-import path from "path";  // Use import instead of require
+import path from "path"; // Use import instead of require
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -13,17 +13,16 @@ export default defineConfig({
     },
   },
   preview: {
-    port: 8081,
-    strictPort: true,
-   },
-   server: {
-    port: 8081,
-    strictPort: true,
-    host: true,
-    origin: "http://0.0.0.0:8080",
-    // hmr:
-    // {overlay : false,
-    // }
-   },
-   
+    port: 8081,   // Port for the preview server
+    strictPort: true,   // Ensure it does not use another port
+  },
+  server: {
+    port: 8081,        // Port for the development server
+    strictPort: true,  // Prevent using another port if 8081 is in use
+    host: '0.0.0.0',   // Allow access from any IP address (important for Docker)
+    hmr: {
+      overlay: false,   // Disable HMR overlay if you want better error handling
+    },
+  },
 });
+

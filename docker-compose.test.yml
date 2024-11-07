@@ -1,16 +1,6 @@
 version: '3.8'
 
 services:
-#   # Nginx Reverse Proxy to forward from port 80 to 8082
-#   nginx-proxy:
-#     image: nginx:latest
-#     container_name: nginx-proxy
-#     restart: always
-#     ports:
-#       - "8083:80"  # Expose port 80 on the host and forward it to Nginx
-#     volumes:
-#       - ./nginx.conf:/etc/nginx/nginx.conf:ro  # Mount the custom Nginx config file
-
   # Traefik reverse proxy setup
   traefik:
     image: traefik:v2.9
@@ -19,11 +9,11 @@ services:
     command:
       - --api.insecure=true
       - --providers.docker=true
-      - --entrypoints.web.address=:8082
-      - --entrypoints.websecure.address=:443
+      - --entrypoints.web.address=:8082       # Change entry point to use 8082
+      - --entrypoints.websecure.address=:443  # Optional if HTTPS is needed
     ports:
-      - "8082:80"
-      - "8081:8081"
+      - "8082:8082"                          # Map Traefik's HTTP traffic to 8082 on the host
+      - "443:443"                           # Optional HTTPS
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
@@ -43,6 +33,6 @@ services:
       - /app/node_modules
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.qmms-dashboard.rule=Host(`172.203.223.45`)"
-      - "traefik.http.routers.qmms-dashboard.entrypoints=web"
-      - "traefik.http.services.qmms-dashboard.loadbalancer.server.port=8081"
+      - "traefik.http.routers.qmms-dashboard.rule=Host(`172.203.223.45`)"   # Replace with your public IP
+      - "traefik.http.routers.qmms-dashboard.entrypoints=web"              # Point to Traefik entry point
+      - "traefik.http.services.qmms-dashboard.loadbalancer.server.port=8081" # Match app's internal port

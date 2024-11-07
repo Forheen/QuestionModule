@@ -2,9 +2,9 @@
 
 services:
   # Traefik reverse proxy setup
-  traefik-dashboard:
+  traefik:
     image: traefik:v2.9
-    container_name: traefik
+    container_name: traefik-dashboard
     restart: always
     command:
       - --api.insecure=true

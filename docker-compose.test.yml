@@ -33,6 +33,6 @@ services:
       - /app/node_modules
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.qmms-dashboard.rule=Host(172.203.223.45)"
+      - "traefik.http.routers.qmms-dashboard.rule=Host(`172.203.223.45`)"
       - "traefik.http.routers.qmms-dashboard.entrypoints=web"
       - "traefik.http.services.qmms-dashboard.loadbalancer.server.port=8081"

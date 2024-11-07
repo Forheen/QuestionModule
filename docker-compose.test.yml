@@ -20,7 +20,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.localhost`)"
       - "traefik.http.routers.traefik-dashboard.service=api@internal"
-      - "traefik.http.services.traefik-dashboard.loadbalancer.server.port=8081"
+      - "traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080"
 
   # Question Module Dashboard
   question_module_dashboard:
@@ -33,6 +33,6 @@ services:
       - /app/node_modules
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.qmms-dashboard.rule=Host(`172.203.223.45`)"
+      - "traefik.http.routers.qmms-dashboard.rule=Host(172.203.223.45)"
       - "traefik.http.routers.qmms-dashboard.entrypoints=web"
       - "traefik.http.services.qmms-dashboard.loadbalancer.server.port=8081"

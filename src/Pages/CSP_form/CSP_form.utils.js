@@ -196,10 +196,15 @@ export const handleQuestionTypeChange = (qIndex, e, setQuestions) => {
             // Set Yes/No options
             currentQuestion.options = ["", ""];
             currentQuestion.subQuestions = [[], []]; // Allow multiple subquestions for Yes/No
-        } else {
+        } else if(value=== "Image"){
             currentQuestion.options = [];
             currentQuestion.subQuestions = [];
         }
+        else{
+            currentQuestion.options = [];
+            currentQuestion.subQuestions = [];
+        }
+
 
         newQuestions[qIndex] = currentQuestion;
         return newQuestions;
@@ -243,21 +248,43 @@ export const handleSubQuestionChange = (qIndex, oIndex, sIndex, e, setQuestions)
 };
 
 
+// export const handleSubQuestionTypeChange = (qIndex, oIndex, sIndex, e, setQuestions) => {
+//     const { value } = e.target;
+//     setQuestions((prevQuestions) => {
+//         const newQuestions = [...prevQuestions];
+//         const currentSubQuestions = [
+//             ...newQuestions[qIndex].subQuestions[oIndex],
+//         ];
+//         currentSubQuestions[sIndex] = {
+//             ...currentSubQuestions[sIndex],
+//             type: value,
+//         };
+//         newQuestions[qIndex].subQuestions[oIndex] = currentSubQuestions;
+//         return newQuestions;
+//     });
+// };
+
 export const handleSubQuestionTypeChange = (qIndex, oIndex, sIndex, e, setQuestions) => {
     const { value } = e.target;
     setQuestions((prevQuestions) => {
-        const newQuestions = [...prevQuestions];
-        const currentSubQuestions = [
-            ...newQuestions[qIndex].subQuestions[oIndex],
-        ];
-        currentSubQuestions[sIndex] = {
-            ...currentSubQuestions[sIndex],
-            type: value,
-        };
-        newQuestions[qIndex].subQuestions[oIndex] = currentSubQuestions;
-        return newQuestions;
+      const newQuestions = [...prevQuestions];
+  
+      // Update the subquestion type directly
+      newQuestions[qIndex].subQuestions[oIndex][sIndex] = {
+        ...newQuestions[qIndex].subQuestions[oIndex][sIndex],
+        type: value,
+      };
+  
+      // Clear options if the new type is not "options"
+      if (value !== "options") {
+        newQuestions[qIndex].subQuestions[oIndex][sIndex].options = [];
+      }
+  
+      return newQuestions;
     });
-};
+  };
+  
+
 
 
 // export default {

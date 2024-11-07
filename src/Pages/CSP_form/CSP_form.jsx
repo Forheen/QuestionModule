@@ -73,7 +73,7 @@ import {
 
 function CSP_form() {
   const [State, setState] = useState(false);
-  const [formName, setFormName] = useState("API Survey 5");
+  const [formName, setFormName] = useState(null);
   const [formVersion, setFormVersion] = useState(1);
   const [questions, setQuestions] = useState(() => {
     const savedQuestions = localStorage.getItem("questions");
@@ -140,10 +140,11 @@ function CSP_form() {
       version: formVersion,
       status: "active",
       questions: questions.map((q) => {
-        // Determine question type (Yes/No, Options, or Text)
+        // Determine question type (Yes/No, Options, Text, or Image)
         const isYesNo = q.type === "Yes/No";
         const isOptions = q.type === "options";
-  
+        const isImage = q.type === "Image";
+    
         // Handle Choices (for Yes/No or Options)
         const choices =
           isYesNo
@@ -152,7 +153,7 @@ function CSP_form() {
                 score: oIndex === 0 ? 5 : 2, // Example scoring for Yes/No
                 subquestions: q.subQuestions[oIndex]?.map((subQ) => ({
                   question_text: subQ.subQuestion,
-                  type: subQ.type === "options" ? "Choice" : "Text",
+                  type: subQ.type === "options" ? "Choice" : subQ.type === "Image" ? "Image" : "Text",
                   is_choice: subQ.type === "options",
                 })),
               }))
@@ -162,20 +163,21 @@ function CSP_form() {
                 score: oIndex === 0 ? 5 : 2, // Example scoring
                 subquestions: q.subQuestions[oIndex]?.map((subQ) => ({
                   question_text: subQ.subQuestion,
-                  type: subQ.type === "options" ? "Choice" : "Text",
+                  type: subQ.type === "options" ? "Choice" : subQ.type === "Image" ? "Image" : "Text",
                   is_choice: subQ.type === "options",
                 })),
               }))
-            : undefined; // No choices for Text type
-  
+            : undefined; // No choices for Text or Image type
+    
         return {
           question_text: q.question,
-          type: isOptions || isYesNo ? "Choice" : "Text",
+          type: isOptions || isYesNo ? "Choice" : isImage ? "Image" : "Text",
           is_choice: isOptions || isYesNo,
           choices: choices,
         };
       }),
     };
+    
   
     try {
       const response = await fetch("http://testinterns.drishtee.in/forms/createform", {

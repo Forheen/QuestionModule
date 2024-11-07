@@ -9,7 +9,7 @@ services:
     command:
       - --api.insecure=true
       - --providers.docker=true
-      - --entrypoints.web.address=:8080  # Changed to use port 8080 instead of 80
+      - --entrypoints.web.address=:8082  # Changed to use port 8080 instead of 80
       - --entrypoints.websecure.address=:443
     ports:
       - "8082:8082"  # Map 8080 on host to 8080 in Traefik

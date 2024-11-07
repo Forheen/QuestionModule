@@ -1,4 +1,4 @@
-version: '3.8'
+
 
 services:
   # Traefik reverse proxy setup
@@ -25,7 +25,7 @@ services:
   # Question Module Dashboard
   question_module_dashboard:
     build: 
-      dockerfile: dockerfile
+      dockerfile: Dockerfile
     container_name: questions_module_dashboard
     restart: always
     volumes:

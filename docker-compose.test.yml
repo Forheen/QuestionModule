@@ -1,6 +1,6 @@
 version: '3.8'
 
-# services:
+services:
 #   # Nginx Reverse Proxy to forward from port 80 to 8082
 #   nginx-proxy:
 #     image: nginx:latest

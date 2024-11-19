@@ -1,0 +1,36 @@
+.tableContainer {
+    width: 80%;
+    margin: auto;
+    font-family: Arial, sans-serif;
+  }
+  
+  .responseTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+  
+  .responseTable th,
+  .responseTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  .responseTable th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+  }
+  
+  .responseTable tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .responseTable tr:hover {
+    background-color: #ddd;
+  }
+  
+  h2, h3, h4, h5 {
+    margin: 0.5rem 0;
+  }
+  

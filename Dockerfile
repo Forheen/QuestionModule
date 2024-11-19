@@ -12,7 +12,7 @@ RUN npm install
 COPY . .
 
 # Expose port 8081 (this should match the internal port Vite runs on)
-EXPOSE 8081
+EXPOSE 8080
 
 # Run the development server
 CMD ["npm", "run", "dev"]

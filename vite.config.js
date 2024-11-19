@@ -13,11 +13,11 @@ export default defineConfig({
     },
   },
   preview: {
-    port: 8081,   // Port for the preview server
+    port: 8080,   // Port for the preview server
     strictPort: true,   // Ensure it does not use another port
   },
   server: {
-    port: 8081,        // Port for the development server
+    port: 8080,        // Port for the development server
     strictPort: true,  // Prevent using another port if 8081 is in use
     host: '0.0.0.0',   // Allow access from any IP address (important for Docker)
     hmr: {

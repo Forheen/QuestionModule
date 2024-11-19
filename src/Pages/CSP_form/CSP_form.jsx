@@ -39,22 +39,22 @@
 //   };
 
 //   return (
-    // <div className="main">
-    //   <div className="outerContainer" style={{ marginLeft: State ? "20%" : 0 }}>
-    //     <AppDrawer onChange={setState} />
-    //     <div className="innerContainer">
-    //       <div className="questionDetails">
-    //         <div className="questionDiv">
-    //           <input className="text" type="text" placeholder="Name:" />
-    //         </div>
-    //         <div className="questionDiv">
-    //           <input className="text" type="number" placeholder="Version:" />
-    //         </div>
-    //       </div>
-    import React, { useState, useEffect } from "react";
+// <div className="main">
+//   <div className="outerContainer" style={{ marginLeft: State ? "20%" : 0 }}>
+//     <AppDrawer onChange={setState} />
+//     <div className="innerContainer">
+//       <div className="questionDetails">
+//         <div className="questionDiv">
+//           <input className="text" type="text" placeholder="Name:" />
+//         </div>
+//         <div className="questionDiv">
+//           <input className="text" type="number" placeholder="Version:" />
+//         </div>
+//       </div>
+import "bootstrap/dist/css/bootstrap.min.css";
+import React, { useState, useEffect } from "react";
 import AppDrawer from "../../components/AppDrawer";
 import "./CSP_form.css";
-import "bootstrap/dist/css/bootstrap.min.css";
 import {
   handleOptionCountChange,
   handleAddSubQuestion,
@@ -71,9 +71,11 @@ import {
   handleSubQuestionTypeChange,
 } from "./CSP_form.utils";
 
+import { Form_Creation } from "../../services/Api";
+
 function CSP_form() {
   const [State, setState] = useState(false);
-  const [formName, setFormName] = useState(null);
+  const [formName, setFormName] = useState("");
   const [formVersion, setFormVersion] = useState(1);
   const [questions, setQuestions] = useState(() => {
     const savedQuestions = localStorage.getItem("questions");
@@ -86,53 +88,6 @@ function CSP_form() {
     localStorage.setItem("questions", JSON.stringify(questions));
   }, [questions]);
 
-  // const submitForm = async () => {
-  //   const formPayload = {
-  //     name: formName,
-  //     description: "A survey to check the APIs",
-  //     version: formVersion,
-  //     status: "active",
-  //     questions: questions.map((q) => ({
-  //       question_text: q.question,
-  //       type: q.type === "options" ? "Choice" : "Text",
-  //       is_choice: q.type === "options",
-  //       choices:
-  //         q.type === "options"
-  //           ? q.options.map((opt, oIndex) => ({
-  //               choice_text: opt,
-  //               score: oIndex === 0 ? 5 : 2, // Example scoring
-  //               subquestions: q.subQuestions[oIndex]?.map((subQ) => ({
-  //                 question_text: subQ.subQuestion,
-  //                 type: subQ.type === "options" ? "Choice" : "Text",
-  //                 is_choice: subQ.type === "options",
-  //               })),
-  //             }))
-  //           : undefined,
-  //     })),
-  //   };
-
-  //   try {
-  //     const response = await fetch("http://testinterns.drishtee.in/forms/createform", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(formPayload),
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error("Failed to submit the form");
-  //     }
-
-  //     const result = await response.json();
-  //     console.log("Form submitted successfully:", result);
-  //     alert("Submitted");
-  //   } catch (error) {
-  //     console.error("Error submitting the form:", error);
-  //     alert("Falied");
-  //   }
-  // };
-
   const submitForm = async () => {
     const formPayload = {
       name: formName,
@@ -144,65 +99,78 @@ function CSP_form() {
         const isYesNo = q.type === "Yes/No";
         const isOptions = q.type === "options";
         const isImage = q.type === "Image";
-    
+        const isDate = q.type === "Date";
+
         // Handle Choices (for Yes/No or Options)
-        const choices =
-          isYesNo
-            ? ["Yes", "No"].map((option, oIndex) => ({
-                choice_text: option,
-                score: oIndex === 0 ? 5 : 2, // Example scoring for Yes/No
-                subquestions: q.subQuestions[oIndex]?.map((subQ) => ({
-                  question_text: subQ.subQuestion,
-                  type: subQ.type === "options" ? "Choice" : subQ.type === "Image" ? "Image" : "Text",
-                  is_choice: subQ.type === "options",
-                })),
-              }))
-            : isOptions
-            ? q.options.map((opt, oIndex) => ({
-                choice_text: opt,
-                score: oIndex === 0 ? 5 : 2, // Example scoring
-                subquestions: q.subQuestions[oIndex]?.map((subQ) => ({
-                  question_text: subQ.subQuestion,
-                  type: subQ.type === "options" ? "Choice" : subQ.type === "Image" ? "Image" : "Text",
-                  is_choice: subQ.type === "options",
-                })),
-              }))
-            : undefined; // No choices for Text or Image type
-    
+        const choices = isYesNo
+          ? ["Yes", "No"].map((option, oIndex) => ({
+              choice_text: option,
+              score: oIndex === 0 ? 5 : 2, // Example scoring for Yes/No
+              subquestions: q.subQuestions[oIndex]?.map((subQ) => ({
+                question_text: subQ.subQuestion,
+                type:
+                  subQ.type === "options"
+                    ? "Choice"
+                    : subQ.type === "Image"
+                    ? "Image"
+                    : subQ.type === "Date"
+                    ? "Date"
+                    : "Text",
+                is_choice: subQ.type === "options",
+              })),
+            }))
+          : isOptions
+          ? q.options.map((opt, oIndex) => ({
+              choice_text: opt,
+              score: oIndex === 0 ? 5 : 2, // Example scoring
+              subquestions: q.subQuestions[oIndex]?.map((subQ) => ({
+                question_text: subQ.subQuestion,
+                type:
+                  subQ.type === "options"
+                    ? "Choice"
+                    : subQ.type === "Image"
+                    ? "Image"
+                    : subQ.type === "Date"
+                    ? "Date"
+                    : "Text",
+                is_choice: subQ.type === "options",
+              })),
+            }))
+          : undefined; // No choices for Text or Image type
+
         return {
           question_text: q.question,
-          type: isOptions || isYesNo ? "Choice" : isImage ? "Image" : "Text",
+          type:
+            isOptions || isYesNo
+              ? "Choice"
+              : isImage
+              ? "Image"
+              : isDate
+              ? "Date"
+              : "Text",
           is_choice: isOptions || isYesNo,
           choices: choices,
         };
       }),
     };
-    
-  
+
     try {
-      const response = await fetch("http://testinterns.drishtee.in/forms/createform", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formPayload),
-      });
-  
+      const response = await Form_Creation(formPayload);
+
       if (!response.ok) {
-        throw new Error("Failed to submit the form");
+        const errorDetails = await response.text(); // Capture server response
+        console.error("Submission error:", errorDetails);
+        throw new Error("Failed to submit the form: " + errorDetails);
       }
-  
+
       const result = await response.json();
       console.log("Form submitted successfully:", result);
       alert("Form Submitted successfully!!");
     } catch (error) {
       console.error("Error submitting the form:", error);
-      alert("Error occured");
+      alert("Form submission unsuccessfull !!");
     }
   };
-  
-
-
 
   return (
     <div className="main">
@@ -263,6 +231,7 @@ function CSP_form() {
                         <option value="options">Options</option>
                         <option value="Yes/No">Yes/No</option>
                         <option value="Image">Image</option>
+                        <option value="Date">Date</option>
                       </select>
 
                       {/* Dynamic Options Count Input */}
@@ -369,6 +338,7 @@ function CSP_form() {
                                     <option value="options">Options</option>
                                     <option value="Yes/No">Yes/No</option>
                                     <option value="Image">Image</option>
+                                    <option value="Date">Date</option>
                                   </select>
 
                                   {subQuestion.type === "options" && (
@@ -583,6 +553,7 @@ function CSP_form() {
                                     <option value="options">Options</option>
                                     <option value="Yes/No">Yes/No</option>
                                     <option value="Image">Image</option>
+                                    <option value="Date">Date</option>
                                   </select>
 
                                   {subQuestion.type === "options" && (

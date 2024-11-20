@@ -51,7 +51,7 @@
 //           <input className="text" type="number" placeholder="Version:" />
 //         </div>
 //       </div>
-import "bootstrap/dist/css/bootstrap.min.css";
+import * as bootstrap from 'bootstrap';
 import React, { useState, useEffect } from "react";
 import AppDrawer from "../../components/AppDrawer";
 import "./CSP_form.css";
@@ -678,13 +678,7 @@ function CSP_form() {
 
           {/* Create Form Button */}
           <div className="createBtn">
-            <button
-              className="btn btn-success"
-              style={{ width: "20%" }}
-              onClick={submitForm}
-            >
-              Create Form
-            </button>
+          <button className="btn btn-primary" type="submit" onClick={submitForm}>Create Form</button>
           </div>
         </div>
       </div>

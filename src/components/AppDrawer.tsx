@@ -179,7 +179,7 @@ export default function AppDrawer(props) {
                 <ListItemText primary={'CSP form Creation'} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>   
-            <ListItem disablePadding sx={{ display: 'block' }} onClick={()=>{navigate('/report')}}>
+            {/* <ListItem disablePadding sx={{ display: 'block' }} onClick={()=>{navigate('/report')}}>
               <ListItemButton
                 sx={{
                   minHeight: 48,
@@ -198,7 +198,7 @@ export default function AppDrawer(props) {
                 </ListItemIcon>
                 <ListItemText primary={'Reports'} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
-            </ListItem> 
+            </ListItem>  */}
       </Drawer>
     </Box>
   );

@@ -1,10 +1,15 @@
-const BASE_URL = import.meta.env.BASE_URL;
-const CREATE_FORM = import.meta.env.CREATE_FORM;
+// const BASE_URL = import.meta.env.BASE_URL;
+// const CREATE_FORM = import.meta.env.CREATE_FORM;
+
+
 
 export const Form_Creation = async (formPayload)=>
 {
     try{
-        const response = await fetch(`${BASE_URL}${CREATE_FORM}`, {
+      //  console.log(BASE_URL);
+      //  console.log(CREATE_FORM);
+
+        const response = await fetch("http://testinterns.drishtee.in/forms/createform", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

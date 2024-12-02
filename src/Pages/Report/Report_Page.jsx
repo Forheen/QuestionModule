@@ -16,6 +16,9 @@ export default function Report_Page() {
   const [loadingLogin, setLoadingLogin] = useState(false);
   const [loadingItems, setLoadingItems] = useState(false);
   const [viewReportClicked, setViewReportClicked] = useState(false);
+  const [combinedAnswers, setCombinedAnswers] = useState({ answers: [] });
+  const [loading, setLoading] = useState(true);
+  
 
   const fetchUserCode = async () => {
     setLoadingLogin(true);
@@ -76,9 +79,61 @@ export default function Report_Page() {
     alert(selectedItem);
   };
 
-  const renderItem = () => {
+  // const renderItem = async () => {
+  //   try {
+  //     console.log("Fetching data...");
+  //     const response = await fetch('http://testinterns.drishtee.in/forms/cspreport', {
+  //       method: 'POST',
+  //       body: JSON.stringify({ cspCode: selectedItem }),
+  //     });
+  //     const json = await response.json();
+  //     if (response.ok) {
+  //       const combinedAnswers = json
+  //         .filter(Boolean)
+  //         .flatMap(response => response.answers || []);
+  //       setCombinedAnswers({ answers: combinedAnswers });
+  //     } else {
+  //       console.error(`Form response error:`, json.message || response.statusText);
+  //     }
+  //   } catch (error) {
+  //     console.error(`Error fetching responses`, error);
+  //   } finally {
+  //     console.log("Setting loading to false");
+  //     setLoading(false);
+  //   }
+  //   setViewReportClicked(true);
+  // };
+
+  const renderItem = async () => {
+    try {
+      console.log("Fetching data...");
+      const response = await fetch('http://testinterns.drishtee.in/forms/cspreport', {
+        method: 'POST',
+        body: JSON.stringify({ cspCode: selectedItem }),
+      });
+      const json = await response.json();
+      if (response.ok) {
+        // Flatten and deduplicate answers
+        const combinedAnswers = Array.from(
+          new Set(
+            json.flatMap(response => response.answers || [])
+          )
+        );
+        console.log(json);
+        console.log(combinedAnswers)
+        setCombinedAnswers({ answers: combinedAnswers });
+      } else {
+        console.error(`Form response error:`, json.message || response.statusText);
+      }
+    } catch (error) {
+      console.error(`Error fetching responses`, error);
+    } finally {
+      console.log("Setting loading to false");
+      setLoading(false);
+    }
     setViewReportClicked(true);
   };
+  
 
   return (
     <div className="mainContainer" style={{ marginLeft: State ? "20%" : 0 }}>
@@ -185,8 +240,8 @@ export default function Report_Page() {
         <button className="btn" onClick={renderItem}>View report</button>
 
         {/* Conditionally render TableView */}
-        {viewReportClicked && selectedItem && (
-          <TableView csp_code={selectedItem} />
+        {viewReportClicked && combinedAnswers && (
+          <TableView answers={combinedAnswers} />
         )}
       </div>
     </div>

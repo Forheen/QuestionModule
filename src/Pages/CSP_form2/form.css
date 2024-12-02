@@ -9,8 +9,8 @@
 .upperDiv
 {
     width: 100%;
-    height: 100%;
-    background-color: #8065EB;
+    height: auto;
+    background-color:#8065EB;
 
     display: flex;
     flex-direction: column;
@@ -23,11 +23,12 @@
     width: 100%;
     height: 10%;
     background-color: #8065EB;
-    padding: 8rem;
+    /* padding: 8rem; */
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 8%;
 }
 
 .btn
@@ -38,7 +39,20 @@
     border-radius:'10px';
     background-color: white;
     position: relative;
+    /* margin-left: 40%; */
+    /* margin-bottom: 5%; */
     
+}
+.btn2
+{
+    width:100%;
+    height:'3rem';
+    border:'4px';
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10%;
 }
 .btn:hover
 {

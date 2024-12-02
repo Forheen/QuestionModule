@@ -89,55 +89,125 @@ function CSP_form() {
   }, [questions]);
 
   const submitForm = async () => {
+    // const formPayload = {
+    //   name: formName,
+    //   description: "A survey to check the APIs",
+    //   version: formVersion,
+    //   status: "active",
+    //   questions: questions.map((q) => {
+    //     // Determine question type (Yes/No, Options, Text, or Image)
+    //     const isYesNo = q.type === "Yes/No";
+    //     const isOptions = q.type === "options";
+    //     const isImage = q.type === "Image";
+    //     const isDate = q.type === "Date";
+
+    //     // Handle Choices (for Yes/No or Options)
+    //     const choices = isYesNo
+    //       ? ["Yes", "No"].map((option, oIndex) => ({
+    //           choice_text: option,
+    //           score: oIndex === 0 ? 5 : 2, // Example scoring for Yes/No
+    //           subquestions: q.subQuestions[oIndex]?.map((subQ) => ({
+    //             question_text: subQ.subQuestion,
+    //             type:
+    //               subQ.type === "options"
+    //                 ? "Choice"
+    //                 : subQ.type === "Image"
+    //                 ? "Image"
+    //                 : subQ.type === "Date"
+    //                 ? "Date"
+    //                 : "Text",
+    //             is_choice: subQ.type === "options",
+    //           })),
+    //         }))
+    //       : isOptions
+    //       ? q.options.map((opt, oIndex) => ({
+    //           choice_text: opt,
+    //           score: oIndex === 0 ? 5 : 2, // Example scoring
+    //           subquestions: q.subQuestions[oIndex]?.map((subQ) => ({
+    //             question_text: subQ.subQuestion,
+    //             type:
+    //               subQ.type === "options"
+    //                 ? "Choice"
+    //                 : subQ.type === "Image"
+    //                 ? "Image"
+    //                 : subQ.type === "Date"
+    //                 ? "Date"
+    //                 : "Text",
+    //             is_choice: subQ.type === "options",
+    //           })),
+    //         }))
+    //       : undefined; // No choices for Text or Image type
+
+    //     return {
+    //       question_text: q.question,
+    //       type:
+    //         isOptions || isYesNo
+    //           ? "Choice"
+    //           : isImage
+    //           ? "Image"
+    //           : isDate
+    //           ? "Date"
+    //           : "Text",
+    //       is_choice: isOptions || isYesNo,
+    //       choices: choices,
+    //     };
+    //   }),
+    // };
+
+    let mainOrderCounter = 0; // Counter for main_order
+
+    // Helper function to process subquestions
+    const processSubQuestions = (subQuestions, parentId) => {
+      return subQuestions?.map((subQ, subIndex) => ({
+        question_text: subQ.subQuestion,
+        type:
+          subQ.type === "options"
+            ? "Choice"
+            : subQ.type === "Image"
+            ? "Image"
+            : subQ.type === "Date"
+            ? "Date"
+            : "Text",
+        is_choice: subQ.type === "options",
+        score: null,
+        main_order: ++mainOrderCounter,
+        parent_id: parentId,
+        choice_id: null,
+        choices:
+          subQ.type === "options"
+            ? subQ.options?.map((opt, oIndex) => ({
+                choice_text: opt,
+                score: oIndex === 0 ? 5 : 2, // Example scoring
+              }))
+            : undefined,
+      }));
+    };
+  
     const formPayload = {
       name: formName,
       description: "A survey to check the APIs",
       version: formVersion,
       status: "active",
       questions: questions.map((q) => {
-        // Determine question type (Yes/No, Options, Text, or Image)
         const isYesNo = q.type === "Yes/No";
         const isOptions = q.type === "options";
         const isImage = q.type === "Image";
         const isDate = q.type === "Date";
-
-        // Handle Choices (for Yes/No or Options)
+  
         const choices = isYesNo
           ? ["Yes", "No"].map((option, oIndex) => ({
               choice_text: option,
-              score: oIndex === 0 ? 5 : 2, // Example scoring for Yes/No
-              subquestions: q.subQuestions[oIndex]?.map((subQ) => ({
-                question_text: subQ.subQuestion,
-                type:
-                  subQ.type === "options"
-                    ? "Choice"
-                    : subQ.type === "Image"
-                    ? "Image"
-                    : subQ.type === "Date"
-                    ? "Date"
-                    : "Text",
-                is_choice: subQ.type === "options",
-              })),
+              score: oIndex === 0 ? 5 : 2,
+              subquestions: processSubQuestions(q.subQuestions[oIndex], option),
             }))
           : isOptions
           ? q.options.map((opt, oIndex) => ({
               choice_text: opt,
-              score: oIndex === 0 ? 5 : 2, // Example scoring
-              subquestions: q.subQuestions[oIndex]?.map((subQ) => ({
-                question_text: subQ.subQuestion,
-                type:
-                  subQ.type === "options"
-                    ? "Choice"
-                    : subQ.type === "Image"
-                    ? "Image"
-                    : subQ.type === "Date"
-                    ? "Date"
-                    : "Text",
-                is_choice: subQ.type === "options",
-              })),
+              score: oIndex === 0 ? 5 : 2,
+              subquestions: processSubQuestions(q.subQuestions[oIndex], opt),
             }))
-          : undefined; // No choices for Text or Image type
-
+          : undefined;
+  
         return {
           question_text: q.question,
           type:
@@ -149,10 +219,17 @@ function CSP_form() {
               ? "Date"
               : "Text",
           is_choice: isOptions || isYesNo,
-          choices: choices,
+          score: null,
+          main_order: ++mainOrderCounter,
+          parent_id: null,
+          choice_id: null,
+          choices,
         };
       }),
     };
+  
+    // Submit the formPayload to the API or use it as needed
+    console.log(formPayload);
 
     try {
       const response = await Form_Creation(formPayload);

@@ -57,7 +57,7 @@ export default function Form() {
       setLoadingItems(true);
       try {
         const response = await fetch(
-          `http://testinterns.drishtee.in/forms/allforms`
+          `http://testinterns.drishtee.in/api/forms/allforms`
         );
         const data = await response.json();
         setAllForms(data);
@@ -114,7 +114,7 @@ export default function Form() {
       setLoading(true);
       try {
         const response = await fetch(
-          `http://testinterns.drishtee.in/forms/getform/${formId}`
+          `http://testinterns.drishtee.in/api/forms/getform/${formId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch form data");

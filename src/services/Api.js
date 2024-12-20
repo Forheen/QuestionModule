@@ -1,6 +1,8 @@
 // const BASE_URL = import.meta.env.BASE_URL;
 // const CREATE_FORM = import.meta.env.CREATE_FORM;
 
+import axios from "axios";
+
 
 
 export const Form_Creation = async (formPayload)=>
@@ -9,7 +11,7 @@ export const Form_Creation = async (formPayload)=>
       //  console.log(BASE_URL);
       //  console.log(CREATE_FORM);
 
-        const response = await fetch("http://testinterns.drishtee.in/forms/createform", {
+        const response = await fetch("http://testinterns.drishtee.in/api/forms/createform", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -28,4 +30,15 @@ export const Form_Creation = async (formPayload)=>
     {
         console.log("Form Creation API call failed",error);
     }
+}
+
+export const Login=async(endpoint,payload)=>
+{
+      try {
+        const response = await axios.post(endpoint, payload);
+        console.log("Login successful:", response);
+        return response;
+      } catch (error) {
+        console.error("Login failed:", error.response?.data || error.message);
+      }
 }

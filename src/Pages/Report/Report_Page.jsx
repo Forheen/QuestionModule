@@ -75,9 +75,12 @@ export default function Report_Page() {
   }, [userCode]);
 
   const handleSelect = (event) => {
-    setSelectedItem(event.target.value);
-    alert(selectedItem);
+    const value = event.target.value;
+    setSelectedItem(value);
+    console.log("Selected item:", value); // Logs the new value directly
   };
+  
+  
 
   // const renderItem = async () => {
   //   try {
@@ -105,13 +108,23 @@ export default function Report_Page() {
   // };
 
   const renderItem = async () => {
+    if (!selectedItem) {
+      alert("Please select an item before fetching the report!");
+      return;
+    }
+  
     try {
-      console.log("Fetching data...");
+      console.log("Fetching data for CSP Code:", selectedItem);
       const response = await fetch('http://testinterns.drishtee.in/forms/cspreport', {
         method: 'POST',
+        // headers: {
+        //   'Content-Type': 'application/json',
+        // },
         body: JSON.stringify({ cspCode: selectedItem }),
       });
+  
       const json = await response.json();
+  
       if (response.ok) {
         // Flatten and deduplicate answers
         const combinedAnswers = Array.from(
@@ -122,17 +135,19 @@ export default function Report_Page() {
         console.log(json);
         console.log(combinedAnswers)
         setCombinedAnswers({ answers: combinedAnswers });
-      } else {
+      }  else {
         console.error(`Form response error:`, json.message || response.statusText);
       }
     } catch (error) {
       console.error(`Error fetching responses`, error);
     } finally {
-      console.log("Setting loading to false");
       setLoading(false);
     }
     setViewReportClicked(true);
   };
+  
+  
+  
   
 
   return (

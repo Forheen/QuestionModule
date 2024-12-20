@@ -186,6 +186,7 @@ function CSP_form() {
     const formPayload = {
       name: formName,
       description: "A survey to check the APIs",
+      product_uuid: "bbf98b4b-517d-407a-b4d6-5eb169152577",
       version: formVersion,
       status: "active",
       questions: questions.map((q) => {

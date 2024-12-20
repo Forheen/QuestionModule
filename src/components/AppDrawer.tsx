@@ -17,6 +17,9 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import { useNavigate } from 'react-router-dom';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { clearToken } from "../redux/authSlice";
+import { useDispatch } from "react-redux";
 // import { ReactComponent as Form } from '../assets/form.svg';
 
 
@@ -96,6 +99,13 @@ export default function AppDrawer(props) {
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
   const { onChange }= props;
+  const dispatch = useDispatch();
+
+  const handleLogout=()=>
+  {
+    dispatch(clearToken());
+    navigate('/');
+  }
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -127,6 +137,19 @@ export default function AppDrawer(props) {
           <Typography variant="h6" noWrap component="div">
             Admin Panel
           </Typography>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleLogout}
+            edge="end"
+            style={{position: 'absolute', right: 0}}
+            sx={{
+              marginRight: 5,
+              ...(open && { display: 'none' }),
+            }}
+          >
+            <LogoutIcon />
+          </IconButton>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>

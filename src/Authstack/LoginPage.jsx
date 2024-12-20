@@ -1,12 +1,24 @@
 import React, { useState } from "react";
 import "./LoginPage.css";
 import { Login } from "../services/Api";
+import { useDispatch } from "react-redux";
+import { setToken } from "../redux/authSlice";
+// import { Navigation } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
-export default function LoginPage() {
+export default function LoginPage({ navigation }) {
   const [loginState, setLoginState] = useState(false); //false for admin true for superadmin
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading,setLoading] = useState(false);
+  const Base = import.meta.env.VITE_BASE_URL;
+  const Admin = import.meta.env.VITE_ADMIN_LOGIN;
+  const SuperAdmin = import.meta.env.VITE_SUPERADMIN_LOGIN;
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  console.log(Base);
  
 
 
@@ -18,28 +30,33 @@ export default function LoginPage() {
     // Clear the message before making the API request
 
     const endpoint = loginState
-      ? "http://testinterns.drishtee.in/api/superadmin/login"
-      : "http://testinterns.drishtee.in/api/admin/login-admin";
+      ? `${Base}${SuperAdmin}`
+      : `${Base}${Admin}`;
     const payload = { email, password };
 
     try {
       setLoading(true);
       const response = await Login(endpoint, payload);
 
-      // Assuming a successful response contains a status code or specific data
-      if (response.statusText='OK') {
-        setLoading(false);
-        alert("Login successful")
-        
-      }
-      else{
-        alert("Login unsuccessful")
+      if (response.data?.token) {
+        console.log(response.data.token);
+        const decodeToken = jwtDecode(response.data.token);
+        console.log(decodeToken.role);
+        dispatch(setToken({token : response.data.token,role : decodeToken.role})); // Store token in Redux
+        alert("Login successful");
+        navigate("/csp");
+      } else {
+        alert("Login failed: Invalid credentials");
       }
     } catch (error) {
-      console.error("Login failed:", error.response?.data || error.message);
-      
+      console.error("Login error:", error);
+      alert("An error occurred during login.");
+    } finally {
+      setLoading(false);
     }
+
   };
+ 
 
   return (
     <div className="main">

@@ -2,6 +2,8 @@
 // const CREATE_FORM = import.meta.env.CREATE_FORM;
 
 import axios from "axios";
+import { setToken } from "../redux/authSlice";
+import { useDispatch } from "react-redux";
 
 
 
@@ -32,13 +34,27 @@ export const Form_Creation = async (formPayload)=>
     }
 }
 
-export const Login=async(endpoint,payload)=>
-{
-      try {
-        const response = await axios.post(endpoint, payload);
-        console.log("Login successful:", response);
-        return response;
-      } catch (error) {
-        console.error("Login failed:", error.response?.data || error.message);
-      }
-}
+// export const Login=async(endpoint,payload)=>
+// {
+//       try {
+//         console.log(endpoint);
+//         const response = await axios.post(endpoint, payload);
+//         console.log("Login successful:", response);
+//         return response;
+//       } catch (error) {
+//         console.error("Login failed:", error.response?.data || error.message);
+//       }
+// }
+
+export const Login = async (endpoint, payload) => {
+  try {
+    console.log("Login endpoint:", endpoint);
+    const response = await axios.post(endpoint, payload);
+
+    console.log("Login successful:", response);
+    return response;
+  } catch (error) {
+    console.error("Login failed:", error.response?.data || error.message);
+    throw error; // Re-throw the error for handling in the calling component
+  }
+};

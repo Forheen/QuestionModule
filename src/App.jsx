@@ -6,6 +6,9 @@ import Report_Page from './Pages/Report/Report_Page'
 import 'bootstrap/dist/css/bootstrap.min.css'; 
 import Form from './Pages/CSP_form2/form';
 import LoginPage from './Authstack/LoginPage';
+import { PersistGate } from "redux-persist/integration/react";
+import { persistor } from "../src/redux/store";
+import AdminRoute from './AdminStack/adminRoute';
 
 
 
@@ -15,7 +18,11 @@ function App() {
     <BrowserRouter>
     <Routes>
       <Route path='/' Component={LoginPage}/>
-      <Route  path='/csp' Component={CSP_form}/>
+      <Route  path='/csp' element={
+        <AdminRoute allowedRoles={['superadmin']}>
+          <CSP_form/>
+        </AdminRoute>
+      }/>
       <Route  path='/report' Component={Report_Page}/>
       <Route path='/product2form' Component={Form}/>
     </Routes>

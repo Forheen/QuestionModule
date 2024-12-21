@@ -3,35 +3,35 @@ import "./LoginPage.css";
 import { Login } from "../services/Api";
 import { useDispatch } from "react-redux";
 import { setToken } from "../redux/authSlice";
-// import { Navigation } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
+import { useAlert } from "../components/Alert/AlertContext";
 
 export default function LoginPage({ navigation }) {
   const [loginState, setLoginState] = useState(false); //false for admin true for superadmin
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const Base = import.meta.env.VITE_BASE_URL;
   const Admin = import.meta.env.VITE_ADMIN_LOGIN;
   const SuperAdmin = import.meta.env.VITE_SUPERADMIN_LOGIN;
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const {showAlert} = useAlert();
+
 
   console.log(Base);
- 
+
 
 
   const changeState = () => {
-    setLoginState((prevState) => !prevState); // Toggle login state
+    setLoginState((prevState) => !prevState);
   };
 
   const submit = async () => {
-    // Clear the message before making the API request
-
-    const endpoint = loginState
-      ? `${Base}${SuperAdmin}`
-      : `${Base}${Admin}`;
+    const endpoint = loginState ? `${Base}${SuperAdmin}` : `${Base}${Admin}`;
     const payload = { email, password };
 
     try {
@@ -42,25 +42,33 @@ export default function LoginPage({ navigation }) {
         console.log(response.data.token);
         const decodeToken = jwtDecode(response.data.token);
         console.log(decodeToken.role);
-        dispatch(setToken({token : response.data.token,role : decodeToken.role})); // Store token in Redux
-        alert("Login successful");
+        dispatch(
+          setToken({ token: response.data.token, role: decodeToken.role })
+        );
+        showAlert("success", "Login Successful");
         navigate("/csp");
       } else {
-        alert("Login failed: Invalid credentials");
+        showAlert("error", "Invalid Credentials");
       }
     } catch (error) {
-      console.error("Login error:", error);
-      alert("An error occurred during login.");
+      console.error("Login error:", error.message);
+      showAlert("error", "An error occurred during login.");
     } finally {
       setLoading(false);
     }
-
   };
- 
 
   return (
     <div className="main">
-      <div className="overlay">
+        {loading ?
+        (
+          <Box sx={{ display: 'flex'}}>
+          <CircularProgress />
+        </Box>
+        ):
+        (
+          <>
+          <div className="overlay">
         {loginState ? (
           <h1 id="text">Login as Super Admin</h1>
         ) : (
@@ -84,7 +92,12 @@ export default function LoginPage({ navigation }) {
           onChange={(e) => setPassword(e.target.value)}
         />
         <div className="btnClass">
-          <button type="button" onClick={submit} className="btn btn-primary" id="btn">
+          <button
+            type="button"
+            onClick={submit}
+            className="btn btn-primary"
+            id="btn"
+          >
             Login
           </button>
           {loginState ? (
@@ -97,8 +110,9 @@ export default function LoginPage({ navigation }) {
             </a>
           )}
         </div>
-       
       </div>
+          </>
+        )}
     </div>
   );
 }

@@ -20,6 +20,7 @@ import { useNavigate } from 'react-router-dom';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { clearToken } from "../redux/authSlice";
 import { useDispatch } from "react-redux";
+import { useAlert } from './Alert/AlertContext';
 // import { ReactComponent as Form } from '../assets/form.svg';
 
 
@@ -100,10 +101,13 @@ export default function AppDrawer(props) {
   const navigate = useNavigate();
   const { onChange }= props;
   const dispatch = useDispatch();
+  const {showAlert} = useAlert();
+  
 
   const handleLogout=()=>
   {
     dispatch(clearToken());
+    showAlert("success","Logged out successfully");
     navigate('/');
   }
 

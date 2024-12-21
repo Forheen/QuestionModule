@@ -22,12 +22,22 @@ function App() {
     <Routes>
       <Route path='/' Component={LoginPage}/>
       <Route  path='/csp' element={
-        <AdminRoute allowedRoles={['superadmin']}>
+        <AdminRoute allowedRoles={['superadmin','admin']}>
           <CSP_form/>
         </AdminRoute>
       }/>
-      <Route  path='/report' Component={Report_Page}/>
-      <Route path='/product2form' Component={Form}/>
+      <Route  path='/report' element=
+      {
+        <AdminRoute allowedRoles={['superadmin','admin']}>
+          <Report_Page/>
+        </AdminRoute>
+      }/>
+      <Route path='/product2form' element=
+      {
+        <AdminRoute allowedRoles={['superadmin','admin']}>
+          <Form/>
+        </AdminRoute>
+      }/>
     </Routes>
     </BrowserRouter>
   )

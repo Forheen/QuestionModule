@@ -21,7 +21,9 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { clearToken } from "../redux/authSlice";
 import { useDispatch } from "react-redux";
 import { useAlert } from './Alert/AlertContext';
-// import { ReactComponent as Form } from '../assets/form.svg';
+import EditNoteIcon from '@mui/icons-material/EditNote';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import HomeIcon from '@mui/icons-material/Home';
 
 
 const drawerWidth = '20%';
@@ -179,7 +181,7 @@ export default function AppDrawer(props) {
                     justifyContent: 'center',
                   }}
                 >
-                  <InboxIcon />
+                  <HomeIcon />
                 </ListItemIcon>
                 <ListItemText primary={'Home'} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
@@ -200,7 +202,7 @@ export default function AppDrawer(props) {
                     justifyContent: 'center',
                   }}
                 >
-                  <InboxIcon />
+                  <EditNoteIcon />
                   {/* <Form/> */}
                 </ListItemIcon>
                 <ListItemText primary={'CSP form Creation'} sx={{ opacity: open ? 1 : 0 }} />
@@ -221,7 +223,7 @@ export default function AppDrawer(props) {
                     justifyContent: 'center',
                   }}
                 >
-                  <InboxIcon />
+                  <AssessmentIcon />
                 </ListItemIcon>
                 <ListItemText primary={'Reports'} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
@@ -246,6 +248,16 @@ export default function AppDrawer(props) {
                 <ListItemText primary={'Priority form creation'} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem> 
+            { open &&
+            (
+
+            <Box sx={{ marginTop: 'auto', padding: 2, textAlign: 'center', color: 'gray' }}>
+          <Typography variant="body2">&#169; 2024 Drishtee</Typography>
+          <Typography variant="body2">@Developed by Chinmoy</Typography>
+        </Box>
+            )
+
+            }
       </Drawer>
     </Box>
   );

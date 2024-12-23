@@ -1,57 +1,4 @@
-// import React, { useState, useEffect } from "react";
-// import AppDrawer from "../../components/AppDrawer";
-// import "./CSP_form.css";
-// import "bootstrap/dist/css/bootstrap.min.css";
-// import {
-//   handleOptionCountChange,
-//   handleAddSubQuestion,
-//   handleDeleteSubQuestion,
-//   handleSubQuestionOptionCountChange,
-//   handleAddOptionToSubQuestion,
-//   addQuestion,
-//   handleDeleteOptionFromSubQuestion,
-//   handleDeleteQuestion,
-//   handleQuestionChange,
-//   handleQuestionTypeChange,
-//   handleOptionChange,
-//   handleSubQuestionChange,
-//   handleSubQuestionTypeChange,
-// } from "./CSP_form.utils";
-
-// function CSP_form() {
-//   const [State, setState] = useState(false);
-
-//   // Initialize questions from localStorage or default to an empty array
-//   const [questions, setQuestions] = useState(() => {
-//     const savedQuestions = localStorage.getItem("questions");
-//     return savedQuestions
-//       ? JSON.parse(savedQuestions)
-//       : [{ question: "", type: "text", options: [], subQuestions: [] }];
-//   });
-
-//   useEffect(() => {
-//     localStorage.setItem("questions", JSON.stringify(questions));
-//   }, [questions]);
-
-//   // Placeholder for form creation logic
-//   const handleFormCreate = () => {
-//     console.log("Form Created with Questions:", questions);
-//   };
-
-//   return (
-// <div className="main">
-//   <div className="outerContainer" style={{ marginLeft: State ? "20%" : 0 }}>
-//     <AppDrawer onChange={setState} />
-//     <div className="innerContainer">
-//       <div className="questionDetails">
-//         <div className="questionDiv">
-//           <input className="text" type="text" placeholder="Name:" />
-//         </div>
-//         <div className="questionDiv">
-//           <input className="text" type="number" placeholder="Version:" />
-//         </div>
-//       </div>
-import * as bootstrap from 'bootstrap';
+import * as bootstrap from "bootstrap";
 import React, { useState, useEffect } from "react";
 import AppDrawer from "../../components/AppDrawer";
 import "./CSP_form.css";
@@ -72,96 +19,49 @@ import {
 } from "./CSP_form.utils";
 
 import { Form_Creation } from "../../services/Api";
-import Button from '@mui/material/Button';
-import {purple} from '@mui/material/colors';
-import { styled } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
-// import Preview from '../../components/PreviewOverlay/Preview';
+import Button from "@mui/material/Button";
+import { purple } from "@mui/material/colors";
+import { styled } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import { fetchProduct } from "../../services/Api";
+import { useSelector } from "react-redux";
 
 function CSP_form() {
   const [State, setState] = useState(false);
   const [formName, setFormName] = useState("");
   const [formVersion, setFormVersion] = useState(1);
+  const [description, setDescription] = useState("");
+  const token = useSelector((state) => state.auth.token);
+  const [productData, setProductData] = useState([]);
+  const [selectedProductId, setSelectedProductId] = useState("");
+  const navigate = useNavigate();
   const [questions, setQuestions] = useState(() => {
     const savedQuestions = localStorage.getItem("questions");
     return savedQuestions
       ? JSON.parse(savedQuestions)
       : [{ question: "", type: "text", options: [], subQuestions: [] }];
   });
-  const [showOverlay, setShowOverlay] = useState(false);
-  const [payload ,setPayload] = useState({});
 
   useEffect(() => {
-    localStorage.setItem("questions", JSON.stringify(questions));
-  }, [questions]);
-  const navigate = useNavigate();
+    let timeout;
+
+    if (token) {
+      timeout = setTimeout(async () => {
+        try {
+          const response = await fetchProduct(token);
+          setProductData(response.products);
+        } catch (err) {
+          console.error("Error fetching product:", err);
+        }
+      }, 300);
+    }
+
+    return () => clearTimeout(timeout); // Cleanup
+  }, [token]);
+  console.log(productData);
 
   const submitForm = async () => {
-    // const formPayload = {
-    //   name: formName,
-    //   description: "A survey to check the APIs",
-    //   version: formVersion,
-    //   status: "active",
-    //   questions: questions.map((q) => {
-    //     // Determine question type (Yes/No, Options, Text, or Image)
-    //     const isYesNo = q.type === "Yes/No";
-    //     const isOptions = q.type === "options";
-    //     const isImage = q.type === "Image";
-    //     const isDate = q.type === "Date";
-
-    //     // Handle Choices (for Yes/No or Options)
-    //     const choices = isYesNo
-    //       ? ["Yes", "No"].map((option, oIndex) => ({
-    //           choice_text: option,
-    //           score: oIndex === 0 ? 5 : 2, // Example scoring for Yes/No
-    //           subquestions: q.subQuestions[oIndex]?.map((subQ) => ({
-    //             question_text: subQ.subQuestion,
-    //             type:
-    //               subQ.type === "options"
-    //                 ? "Choice"
-    //                 : subQ.type === "Image"
-    //                 ? "Image"
-    //                 : subQ.type === "Date"
-    //                 ? "Date"
-    //                 : "Text",
-    //             is_choice: subQ.type === "options",
-    //           })),
-    //         }))
-    //       : isOptions
-    //       ? q.options.map((opt, oIndex) => ({
-    //           choice_text: opt,
-    //           score: oIndex === 0 ? 5 : 2, // Example scoring
-    //           subquestions: q.subQuestions[oIndex]?.map((subQ) => ({
-    //             question_text: subQ.subQuestion,
-    //             type:
-    //               subQ.type === "options"
-    //                 ? "Choice"
-    //                 : subQ.type === "Image"
-    //                 ? "Image"
-    //                 : subQ.type === "Date"
-    //                 ? "Date"
-    //                 : "Text",
-    //             is_choice: subQ.type === "options",
-    //           })),
-    //         }))
-    //       : undefined; // No choices for Text or Image type
-
-    //     return {
-    //       question_text: q.question,
-    //       type:
-    //         isOptions || isYesNo
-    //           ? "Choice"
-    //           : isImage
-    //           ? "Image"
-    //           : isDate
-    //           ? "Date"
-    //           : "Text",
-    //       is_choice: isOptions || isYesNo,
-    //       choices: choices,
-    //     };
-    //   }),
-    // };
-
     let mainOrderCounter = 0; // Counter for main_order
 
     // Helper function to process subquestions
@@ -190,11 +90,11 @@ function CSP_form() {
             : undefined,
       }));
     };
-  
+
     const formPayload = {
       name: formName,
-      description: "A survey to check the APIs",
-      product_uuid: "bbf98b4b-517d-407a-b4d6-5eb169152577",
+      description: description,
+      product_uuid: selectedProductId,
       version: formVersion,
       status: "active",
       questions: questions.map((q) => {
@@ -202,7 +102,7 @@ function CSP_form() {
         const isOptions = q.type === "options";
         const isImage = q.type === "Image";
         const isDate = q.type === "Date";
-  
+
         const choices = isYesNo
           ? ["Yes", "No"].map((option, oIndex) => ({
               choice_text: option,
@@ -216,7 +116,7 @@ function CSP_form() {
               subquestions: processSubQuestions(q.subQuestions[oIndex], opt),
             }))
           : undefined;
-  
+
         return {
           question_text: q.question,
           type:
@@ -236,11 +136,6 @@ function CSP_form() {
         };
       }),
     };
-  
-    // Submit the formPayload to the API or use it as needed
-    // console.log(formPayload);
-    // setPayload(formPayload);
-    
 
     try {
       const response = await Form_Creation(formPayload);
@@ -261,7 +156,7 @@ function CSP_form() {
   };
 
   const setPreview = () => {
-    
+    console.log(selectedProductId);
     let mainOrderCounter = 0;
     const processSubQuestions = (subQuestions, parentId) => {
       return subQuestions?.map((subQ, subIndex) => ({
@@ -290,7 +185,7 @@ function CSP_form() {
     };
     const formPayload = {
       name: formName,
-      description: "A survey to check the APIs",
+      description: description,
       product_uuid: "bbf98b4b-517d-407a-b4d6-5eb169152577",
       version: formVersion,
       status: "active",
@@ -299,7 +194,7 @@ function CSP_form() {
         const isOptions = q.type === "options";
         const isImage = q.type === "Image";
         const isDate = q.type === "Date";
-  
+
         const choices = isYesNo
           ? ["Yes", "No"].map((option, oIndex) => ({
               choice_text: option,
@@ -313,7 +208,7 @@ function CSP_form() {
               subquestions: processSubQuestions(q.subQuestions[oIndex], opt),
             }))
           : undefined;
-  
+
         return {
           question_text: q.question,
           type:
@@ -334,22 +229,21 @@ function CSP_form() {
       }),
     };
 
-    setPayload(formPayload);
-    setShowOverlay(true);
-    navigate('/preview', { state: { formQuestions: formPayload } });
-  }
+    navigate("/preview", { state: { formQuestions: formPayload } });
+  };
 
   //custom preview button
   const ColorButton = styled(Button)(({ theme }) => ({
     color: theme.palette.getContrastText(purple[500]),
     backgroundColor: purple[50],
-    '&:hover': {
+    "&:hover": {
       backgroundColor: purple[500],
     },
   }));
 
-
-
+  const handleProductChange = (event) => {
+    setSelectedProductId(event.target.value);
+  };
 
   return (
     <div className="main">
@@ -375,6 +269,29 @@ function CSP_form() {
                 onChange={(e) => setFormVersion(e.target.value)}
               />
             </div>
+          </div>
+          <textarea
+            className="text"
+            placeholder="Write form description :"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            style={{ marginBottom: "1%", resize: "vertical" }}
+          />
+          <div className="uuidSelect">
+            <select
+              className="uuidSelectBox"
+              value={selectedProductId}
+              onChange={handleProductChange}
+            >
+              <option value="" disabled>
+                Select a Product
+              </option>
+              {productData.map((product) => (
+                <option key={product.product_uuid} value={product.product_uuid}>
+                  {product.product_name}
+                </option>
+              ))}
+            </select>
           </div>
 
           {questions.length > 0 ? (
@@ -848,18 +765,24 @@ function CSP_form() {
 
           {/* Add Question Button */}
           <div className="addBtn">
-            <img
+            <AddCircleIcon
               style={{ width: "45px", height: "45px" }}
-              src="/public/add.png"
               onClick={() => addQuestion(setQuestions)}
             />
           </div>
 
           {/* Create Form Button */}
           <div className="createBtn">
-          {/* <button id='submitBtn' className="btn btn-primary" type="submit" onClick={submitForm}>Create Form</button> */}
-          <ColorButton style={{backgroundColor:'white',color :'black'}} variant="contained" onClick={setPreview}>Preview</ColorButton>
-          <Button variant="contained" onClick={submitForm}>Submit</Button>
+            <ColorButton
+              style={{ backgroundColor: "white", color: "black" }}
+              variant="contained"
+              onClick={setPreview}
+            >
+              Preview
+            </ColorButton>
+            <Button variant="contained" onClick={submitForm}>
+              Submit
+            </Button>
           </div>
         </div>
       </div>

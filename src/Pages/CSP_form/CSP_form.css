@@ -13,7 +13,7 @@
   display: flex;
   overflow-y: auto;
   background-color: #8065EB;
-  position: relative; /* Ensure it's relative for proper overlay behavior */
+  position: relative; 
 }
 
 .text
@@ -128,6 +128,30 @@
   margin-left: 1.5%;
   
 }
+.uuidSelect{
+  width: 100%;
+  align-items: center;
+  border: none;
+  padding: 2%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  color: black;
+  /* margin-left: 2px; */
+}
+
+.uuidSelectBox
+{
+  width: 30%;
+  height: 35px;
+  border-radius: 30px;
+  align-items: center;
+  border: none;
+  padding: 2px;
+  color: black;
+ 
+}
 
 .optionBoxOrganised
 {
@@ -156,6 +180,11 @@
   margin-right: -15%;
   background-color: white;
   border-radius: 50%;
+}
+
+.icon:hover
+{
+  cursor: pointer;
 }
 
 .optionBoxExtended
@@ -254,6 +283,10 @@
   margin-top: 4%;
  }
 
+ .addBtn:hover{
+  cursor: pointer;
+ }
+
  .createBtn
  {
     width: 100%;
@@ -267,12 +300,6 @@
   background-color: #0367D9;
  }
 
- .preview
- {
-  width: 100%;
-  height: 100%;
-
- }
 
 
 

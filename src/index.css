@@ -15,12 +15,6 @@
 
 
 /* ... */
-html, body {
-  height: 100%;
-  margin: 0; /* Remove margin */
-  padding: 0; /* Remove padding */
-  overflow-x: hidden; /* Prevent horizontal scrolling */
-}
 
 
 /* :

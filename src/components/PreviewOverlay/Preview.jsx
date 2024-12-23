@@ -3,6 +3,8 @@ import "./Preview.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import IconButton from "@mui/material/IconButton";
 
 const Preview = ({formQuestions }) => {
   const navigate = useNavigate(); // Initialize navigate
@@ -113,10 +115,14 @@ const Preview = ({formQuestions }) => {
   };
 
   return (
-    <div className="overlay">
+    <div className="overlayPreview">
       <div className="overlay-content">
         {/* Back Button */}
-        <button className="back-button" onClick={() => navigate(-1)}>← Back</button>
+        {/* <button className="back-button" onClick={() => navigate(-1)}>← Back</button> */}
+        {/* <ArrowBackIosIcon className="back-button" onClick={() => navigate(-1)} /> */}
+        <IconButton onClick={() => navigate(-1)} color="primary">
+      <ArrowBackIosIcon />
+    </IconButton>
 
         {/* Close Button */}
         {/* <button className="close-button" onClick={onClose}>×</button> */}

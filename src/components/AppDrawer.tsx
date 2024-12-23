@@ -24,6 +24,7 @@ import { useAlert } from './Alert/AlertContext';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import HomeIcon from '@mui/icons-material/Home';
+import PageviewIcon from '@mui/icons-material/Pageview';
 
 
 const drawerWidth = '20%';
@@ -243,9 +244,9 @@ export default function AppDrawer(props) {
                     justifyContent: 'center',
                   }}
                 >
-                  <InboxIcon />
+                  <PageviewIcon />
                 </ListItemIcon>
-                <ListItemText primary={'Priority form creation'} sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary={'Forms and Preview'} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem> 
             { open &&

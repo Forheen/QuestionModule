@@ -1,5 +1,5 @@
 /* Overlay styles */
-.overlay {
+.overlayPreview {
     position: fixed; /* Fix the overlay to the screen */
     top: 0;
     left: 0;
@@ -32,18 +32,19 @@
     position: absolute;
     top: 20px;
     left: 20px;
-    padding: 10px;
-    background-color: #0367D9;
     color: white;
     border: none;
     border-radius: 5px;
-    font-size: 16px;
+    align-items: center;
+    /* font-size: 16px; */
     cursor: pointer;
     z-index: 10000; /* Ensure it's on top of content */
+    width: 14px;
+    height: 14px;
   }
   
   .back-button:hover {
-    background-color: #0056b3;
+    background-color: #c9c9c9;
   }
   
   /* Title styles */

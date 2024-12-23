@@ -72,6 +72,11 @@ import {
 } from "./CSP_form.utils";
 
 import { Form_Creation } from "../../services/Api";
+import Button from '@mui/material/Button';
+import {purple} from '@mui/material/colors';
+import { styled } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
+// import Preview from '../../components/PreviewOverlay/Preview';
 
 function CSP_form() {
   const [State, setState] = useState(false);
@@ -83,10 +88,13 @@ function CSP_form() {
       ? JSON.parse(savedQuestions)
       : [{ question: "", type: "text", options: [], subQuestions: [] }];
   });
+  const [showOverlay, setShowOverlay] = useState(false);
+  const [payload ,setPayload] = useState({});
 
   useEffect(() => {
     localStorage.setItem("questions", JSON.stringify(questions));
   }, [questions]);
+  const navigate = useNavigate();
 
   const submitForm = async () => {
     // const formPayload = {
@@ -230,7 +238,9 @@ function CSP_form() {
     };
   
     // Submit the formPayload to the API or use it as needed
-    console.log(formPayload);
+    // console.log(formPayload);
+    // setPayload(formPayload);
+    
 
     try {
       const response = await Form_Creation(formPayload);
@@ -249,6 +259,97 @@ function CSP_form() {
       alert("Form submission unsuccessfull !!");
     }
   };
+
+  const setPreview = () => {
+    
+    let mainOrderCounter = 0;
+    const processSubQuestions = (subQuestions, parentId) => {
+      return subQuestions?.map((subQ, subIndex) => ({
+        question_text: subQ.subQuestion,
+        type:
+          subQ.type === "options"
+            ? "Choice"
+            : subQ.type === "Image"
+            ? "Image"
+            : subQ.type === "Date"
+            ? "Date"
+            : "Text",
+        is_choice: subQ.type === "options",
+        score: null,
+        main_order: ++mainOrderCounter,
+        parent_id: parentId,
+        choice_id: null,
+        choices:
+          subQ.type === "options"
+            ? subQ.options?.map((opt, oIndex) => ({
+                choice_text: opt,
+                score: oIndex === 0 ? 5 : 2, // Example scoring
+              }))
+            : undefined,
+      }));
+    };
+    const formPayload = {
+      name: formName,
+      description: "A survey to check the APIs",
+      product_uuid: "bbf98b4b-517d-407a-b4d6-5eb169152577",
+      version: formVersion,
+      status: "active",
+      questions: questions.map((q) => {
+        const isYesNo = q.type === "Yes/No";
+        const isOptions = q.type === "options";
+        const isImage = q.type === "Image";
+        const isDate = q.type === "Date";
+  
+        const choices = isYesNo
+          ? ["Yes", "No"].map((option, oIndex) => ({
+              choice_text: option,
+              score: oIndex === 0 ? 5 : 2,
+              subquestions: processSubQuestions(q.subQuestions[oIndex], option),
+            }))
+          : isOptions
+          ? q.options.map((opt, oIndex) => ({
+              choice_text: opt,
+              score: oIndex === 0 ? 5 : 2,
+              subquestions: processSubQuestions(q.subQuestions[oIndex], opt),
+            }))
+          : undefined;
+  
+        return {
+          question_text: q.question,
+          type:
+            isOptions || isYesNo
+              ? "Choice"
+              : isImage
+              ? "Image"
+              : isDate
+              ? "Date"
+              : "Text",
+          is_choice: isOptions || isYesNo,
+          score: null,
+          main_order: ++mainOrderCounter,
+          parent_id: null,
+          choice_id: null,
+          choices,
+        };
+      }),
+    };
+
+    setPayload(formPayload);
+    setShowOverlay(true);
+    navigate('/preview', { state: { formQuestions: formPayload } });
+  }
+
+  //custom preview button
+  const ColorButton = styled(Button)(({ theme }) => ({
+    color: theme.palette.getContrastText(purple[500]),
+    backgroundColor: purple[50],
+    '&:hover': {
+      backgroundColor: purple[500],
+    },
+  }));
+
+
+
 
   return (
     <div className="main">
@@ -756,7 +857,9 @@ function CSP_form() {
 
           {/* Create Form Button */}
           <div className="createBtn">
-          <button className="btn btn-primary" type="submit" onClick={submitForm}>Create Form</button>
+          {/* <button id='submitBtn' className="btn btn-primary" type="submit" onClick={submitForm}>Create Form</button> */}
+          <ColorButton style={{backgroundColor:'white',color :'black'}} variant="contained" onClick={setPreview}>Preview</ColorButton>
+          <Button variant="contained" onClick={submitForm}>Submit</Button>
           </div>
         </div>
       </div>

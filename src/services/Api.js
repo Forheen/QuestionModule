@@ -127,13 +127,13 @@ export const fetchFormByUUID = async (uuid) => {
 }
 
 //fetch form by id 
-export const fetchFormById = async (id) => {
-  try {
-    const response = await axios.get(`${BASE_URL}${GET_FORM}/${id}`);
-    console.log("API Response:", response.data);
-    return response.data;
-  } catch (error) {
-    console.error("Form fetch failed:", error);
-    throw error; // Re-throw to handle it in the calling function
-  }
-}
+// export const fetchFormById = async (id) => {
+//   try {
+//     const response = await axios.get(`${BASE_URL}${GET_FORM}/${id}`);
+//     console.log("API Response:", response.data);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Form fetch failed:", error);
+//     throw error; // Re-throw to handle it in the calling function
+//   }
+// }

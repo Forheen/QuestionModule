@@ -110,6 +110,7 @@ export default function AppDrawer(props) {
   const handleLogout=()=>
   {
     dispatch(clearToken());
+    localStorage.clear();
     showAlert("success","Logged out successfully");
     navigate('/');
   }

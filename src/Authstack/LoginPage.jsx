@@ -8,6 +8,8 @@ import { jwtDecode } from "jwt-decode";
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import { useAlert } from "../components/Alert/AlertContext";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { IconButton, InputAdornment, TextField } from "@mui/material";
 
 export default function LoginPage({ navigation }) {
   const [loginState, setLoginState] = useState(false); //false for admin true for superadmin
@@ -20,11 +22,14 @@ export default function LoginPage({ navigation }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {showAlert} = useAlert();
+  const [showPassword, setShowPassword] = useState(false);
 
 
   console.log(Base);
 
-
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   const changeState = () => {
     setLoginState((prevState) => !prevState);
@@ -74,23 +79,56 @@ export default function LoginPage({ navigation }) {
         ) : (
           <h1 id="text">Login as Admin</h1>
         )}
-        <input
-          type="email"
-          className="form-control"
-          id="exampleInputEmail1"
-          aria-describedby="emailHelp"
-          placeholder="Enter email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          className="form-control"
-          id="exampleInputPassword1"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+            <TextField
+              size="small"
+              // id="emailInput"
+              label="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              fullWidth
+              required
+              InputProps={{
+                style: {
+                  backgroundColor: "white",
+                   // Set background color to white
+                },
+              }}
+              sx={{
+                marginBottom: 2, // Space between the fields
+              }}
+            />
+
+            {/* Password field with visibility toggle */}
+            <TextField
+              size="small"
+              // id="exampleInputPassword1"
+              type={showPassword ? "text" : "password"}
+              label="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              fullWidth
+              InputProps={{
+                style: {
+                  backgroundColor: "white", // Set background color to white
+                },
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                marginBottom: 2, // Space between the fields
+              }}
+            />
         <div className="btnClass">
           <button
             type="button"

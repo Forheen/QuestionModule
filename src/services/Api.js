@@ -6,6 +6,8 @@ import { useSelector } from 'react-redux';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const CREATE_FORM = import.meta.env.VITE_CREATE_FORM;
 const PRODUCT_ENDPOINT = import.meta.env.VITE_PRODUCTS_ENDPOINT;
+const GET_FORM = import.meta.env.VITE_GET_FORM;
+const SUBMIT_FORM = import.meta.env.VITE_SUBMIT_FORM;
 
 
 
@@ -65,3 +67,47 @@ export const fetchProduct = async (token) => {
     throw error; // Re-throw to handle it in the calling function
   }
 };
+
+// from render api's
+
+export const submit = async (submissionPayload) => {
+  try {
+      const response = await fetch(
+          `${BASE_URL}${SUBMIT_FORM}`,
+          {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(submissionPayload),
+          }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+          console.error("Submission failed:", data);
+          throw new Error(data.message || "Failed to submit the form");
+      }
+
+      return response;
+  } catch (error) {
+      console.error("Error submitting form:", error);
+      throw error;
+
+  }
+};
+
+
+export const getForm = async (formId) => {
+  try {
+
+      const response = await fetch(`${BASE_URL}${GET_FORM}/${formId}`);
+      if (!response.ok) {
+          throw new Error("Failed to fetch form data");
+      }
+      return response;
+  }
+
+  catch (error) {
+      console.error("Error fetching form details:", error);
+  }
+}

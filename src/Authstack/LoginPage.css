@@ -39,6 +39,7 @@
 {
     border: none;
     margin-top: 5%;
+    color: white;
 }
 .btnClass
 {
@@ -53,6 +54,12 @@
     background-color: #0168D9;
     margin-bottom: 5px;
     margin-top: 5%;
+    border: none;
+}
+
+#btn:hover
+{
+    background-color: #0158C7;
 }
 #link
 {

@@ -44,6 +44,26 @@ function CSP_form() {
   });
 
   useEffect(() => {
+    const savedFormName = localStorage.getItem("formName");
+    const savedFormVersion = localStorage.getItem("formVersion");
+    const savedDescription = localStorage.getItem("description");
+    const savedSelectedProductId = localStorage.getItem("selectedProductId");
+
+    if (savedFormName) setFormName(savedFormName);
+    if (savedFormVersion) setFormVersion(JSON.parse(savedFormVersion));
+    if (savedDescription) setDescription(savedDescription);
+    if (savedSelectedProductId) setSelectedProductId(savedSelectedProductId);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("questions", JSON.stringify(questions));
+    localStorage.setItem("formName", formName);
+    localStorage.setItem("formVersion", JSON.stringify(formVersion));
+    localStorage.setItem("description", description);
+    localStorage.setItem("selectedProductId", selectedProductId);
+  }, [questions, formName, formVersion, description, selectedProductId]);
+
+  useEffect(() => {
     let timeout;
 
     if (token) {

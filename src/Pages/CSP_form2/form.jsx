@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import AppDrawer from "../../components/AppDrawer";
-import { fetchProduct } from "../../services/Api";
+import { fetchProduct, fetchFormByUUID, fetchFormById } from "../../services/Api";
 import { useSelector } from "react-redux";
 import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import "./form.css";
+import { useNavigate } from "react-router-dom";
 
 export default function Form() {
 
@@ -11,228 +14,207 @@ export default function Form() {
   const [productData, setProductData] = useState([]);
   const [selectedProductId, setSelectedProductId] = useState("");
   const [state, setState] = useState(null);
-  // const [username, setUsername] = useState("");
-  // const [password, setPassword] = useState("");
-  // const [userCode, setUserCode] = useState(null);
-  // const [allForms, setAllForms] = useState([]);
-  // const [selectedForm, setSelectedForm] = useState("");
-  // const [formData, setFormData] = useState(null);
-  // const [answers, setAnswers] = useState({});
-  // const [loading, setLoading] = useState(false);
-  // const [loadingLogin, setLoadingLogin] = useState(false);
-  // const [loadingItems, setLoadingItems] = useState(false);
-  // const [items,setItems]=useState(null);
-  // const [selectedCsp ,setSelectedCsp]=useState(null);
+  const [forms, setForms] = useState([]);
+  const navigate = useNavigate();
 
-  // // Fetch user code on login
-  // const fetchUserCode = async () => {
-  //   setLoadingLogin(true);
-  //   try {
-  //     const response = await axios.post(
-  //       `https://bcadmin.drishtee.in/api/Login`,
-  //       new URLSearchParams({
-  //         username,
-  //         password,
-  //         token: "drishtee",
-  //         FCMID: "",
-  //       }),
-  //       { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
-  //     );
+  useEffect(() => {
+    let timeout;
 
-  //     if (response.status === 200) {
-  //       const userCode = response.data.Data[0].modified_by;
-  //       setUserCode(userCode);
-  //     } else {
-  //       throw new Error(response.data.message || "Login failed");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error logging in:", error);
-  //     alert("Login failed. Please check your credentials.");
-  //   } finally {
-  //     setLoadingLogin(false);
-  //   }
-  // };
+    if (token) {
+      timeout = setTimeout(async () => {
+        try {
+          const response = await fetchProduct(token);
+          setProductData(response.products);
+        } catch (err) {
+          console.error("Error fetching product:", err);
+        }
+      }, 300);
+    }
 
-  // // Fetch available forms when userCode is available
-  // useEffect(() => {
-  //   const fetchForms = async () => {
-  //     if (!userCode) return;
-
-  //     setLoadingItems(true);
-  //     try {
-  //       const response = await fetch(
-  //         `http://testinterns.drishtee.in/api/forms/allforms`
-  //       );
-  //       const data = await response.json();
-  //       setAllForms(data);
-  //     } catch (error) {
-  //       console.error("Error fetching forms:", error);
-  //     } finally {
-  //       setLoadingItems(false);
-  //     }
-  //   };
-
-  //   const fetchCsp=async()=>{
-  //     if(userCode)
-  //     {
-
-      
-  //     try {
-  //       const response = await axios.get(
-  //         `https://bcadmin.drishtee.in/api/GetCSPUser/GetCSPUserLists?userid=${userCode}`,
-  //         { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
-  //       );
-
-  //       if (response.status === 200 && response.data.Data2) {
-  //         setItems(response.data.Data2.map(item => ({
-  //           value: item.cspcode,
-  //           label: item.cspname
-  //         })));
-  //       } else if (response.data.Message === "No records found") {
-  //         console.warn("No records found");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching items:", error);
-  //     } finally {
-  //       setLoadingItems(false);
-  //     }
-  //   };
-  // }
- 
-
-  //   fetchForms();
-  //   fetchCsp();
-  // }, [userCode]);
-  // const handleFormSelect2=(event)=>
-  // {
-  //     const csp_code=event.target.value;
-  //     setSelectedCsp(csp_code);
-  // }
-
-  // // Fetch form details when a form is selected
-  // const handleFormSelect = async (event) => {
-  //   const formId = event.target.value;
-  //   setSelectedForm(formId);
-
-  //   if (formId) {
-  //     setLoading(true);
-  //     try {
-  //       const response = await fetch(
-  //         `http://testinterns.drishtee.in/api/forms/getform/${formId}`
-  //       );
-  //       if (!response.ok) {
-  //         throw new Error("Failed to fetch form data");
-  //       }
-  //       const data = await response.json();
-  //       const sortedQuestions = data.questions.sort(
-  //         (a, b) => a.main_order - b.main_order
-  //       );
-  //       setFormData({ ...data, questions: sortedQuestions });
-  //     } catch (error) {
-  //       console.error("Error fetching form:", error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   }
-  // };
-
-  // // Handle answer changes
-  // const handleAnswerChange = (questionId, value) => {
-  //   setAnswers((prev) => ({ ...prev, [questionId]: value }));
-  // };
-
-  // // Validate and submit the form
-  // const handleSubmit = async () => {
-  //   const isFormValid = formData.questions.every(
-  //     (q) => answers[q.id] !== undefined && answers[q.id] !== ""
-  //   );
-
-  //   if (!isFormValid) {
-  //     alert("Please answer all the questions before submitting.");
-  //     return;
-  //   }
-
-  //   const submissionPayload = {
-  //     form_id: selectedForm,
-  //     csp_code: selectedCsp,
-  //     answers: Object.entries(answers).map(([questionId, answer]) => {
-  //       const isChoice =
-  //         typeof answer === "string" &&
-  //         formData.questions.find((q) => q.id === questionId)?.type === "Choice";
-  //       return isChoice
-  //         ? { question_id: questionId, choice_id: answer }
-  //         : { question_id: questionId, answer_text: answer };
-  //     }),
-  //   };
-
-  //   try {
-  //     const response = await fetch(
-  //       "http://testinterns.drishtee.in/forms/submit",
-  //       {
-  //         method: "POST",
-  //         headers: { "Content-Type": "application/json" },
-  //         body: JSON.stringify(submissionPayload),
-  //       }
-  //     );
-
-  //     if (!response.ok) {
-  //       throw new Error("Failed to submit the form");
-  //     }
-
-  //     alert("Form submitted successfully!");
-  //   } catch (error) {
-  //     console.error("Error submitting form:", error);
-  //     alert("There was an error submitting the form. Please try again.");
-  //   }
-  // };
-    useEffect(() => {
-      let timeout;
-  
-      if (token) {
-        timeout = setTimeout(async () => {
-          try {
-            const response = await fetchProduct(token);
-            setProductData(response.products);
-          } catch (err) {
-            console.error("Error fetching product:", err);
-          }
-        }, 300);
-      }
-  
-      return () => clearTimeout(timeout); // Cleanup
-    }, [token]);
-    console.log(productData);
+    return () => clearTimeout(timeout); // Cleanup
+  }, [token]);
+  console.log(productData);
 
   const handleProductChange = (event) => {
     setSelectedProductId(event.target.value);
+    console.log(event.target.value);
   };
 
+  // fetch forms by UUID
+  const fetchForms = async () => {
+    console.log(selectedProductId);
+    try {
+      const response = await fetchFormByUUID(selectedProductId);
+      console.log("All forms fetched successfully");
+      console.log(response);
+      setForms(response);
+    } catch (err) {
+      console.error("Error fetching form:", err);
+    }
+  };
+
+  const handleFormClick = async (form) => {
+    console.log("Form clicked:", form);
+    console.log("Form ID:", form.id);
+    try {
+      const response = await fetchFormById(form.id);
+      console.log("Form fetched successfully", response);
+      const formPayload = constructFormPayload(response);
+      console.log("Constructed Form Payload:", formPayload);
+      navigate("/preview", { state: { formQuestions: formPayload } });
+    } catch (err) {
+      console.error("Error fetching form:", err);
+    }
+  };
+
+  const truncateDescription = (description) => {
+    const words = description.split(" ");
+    if (words.length > 6) {
+      return words.slice(0, 6).join(" ") + " ...";
+    }
+    return description;
+  };
+
+  const constructFormPayload = (formResponse) => {
+    let mainOrderCounter = 0;
+
+    const processSubQuestions = (subQuestions) => {
+      if (!subQuestions) return [];
+
+      return subQuestions.map((subQ) => {
+        const isYesNo = subQ.type === "Yes/No";
+        const isOptions = subQ.type === "options";
+        const isImage = subQ.type === "Image";
+        const isDate = subQ.type === "Date";
+
+        const choices = isYesNo
+          ? ["Yes", "No"].map((option, oIndex) => ({
+              choice_text: option,
+              score: oIndex === 0 ? 5 : 2,
+              subquestions: processSubQuestions(subQ.Subquestions[oIndex]),
+            }))
+          : isOptions
+          ? subQ.Choices.map((opt, oIndex) => ({
+              choice_text: opt.choice_text,
+              score: oIndex === 0 ? 5 : 2,
+              subquestions: processSubQuestions(subQ.Subquestions[oIndex]),
+            }))
+          : undefined;
+
+        return {
+          question_text: subQ.question_text,
+          type:
+            isOptions || isYesNo
+              ? "Choice"
+              : isImage
+              ? "Image"
+              : isDate
+              ? "Date"
+              : "Text",
+          is_choice: isOptions || isYesNo,
+          score: null,
+          main_order: ++mainOrderCounter,
+          parent_id: subQ.parent_id,
+          choice_id: subQ.choice_id,
+          choices,
+        };
+      });
+    };
+
+    const formPayload = {
+      name: formResponse.name,
+      description: formResponse.description,
+      product_uuid: formResponse.product_uuid,
+      version: formResponse.version,
+      status: formResponse.status,
+      questions: formResponse.questions.map((q) => {
+        const isYesNo = q.type === "Yes/No";
+        const isOptions = q.type === "options";
+        const isImage = q.type === "Image";
+        const isDate = q.type === "Date";
+
+        const choices = isYesNo
+          ? ["Yes", "No"].map((option, oIndex) => ({
+              choice_text: option,
+              score: oIndex === 0 ? 5 : 2,
+              subquestions: processSubQuestions(q.Subquestions[oIndex]),
+            }))
+          : isOptions
+          ? q.Choices.map((opt, oIndex) => ({
+              choice_text: opt.choice_text,
+              score: oIndex === 0 ? 5 : 2,
+              subquestions: processSubQuestions(q.Subquestions[oIndex]),
+            }))
+          : undefined;
+
+        return {
+          question_text: q.question_text,
+          type:
+            isOptions || isYesNo
+              ? "Choice"
+              : isImage
+              ? "Image"
+              : isDate
+              ? "Date"
+              : "Text",
+          is_choice: isOptions || isYesNo,
+          score: null,
+          main_order: ++mainOrderCounter,
+          parent_id: null,
+          choice_id: null,
+          choices,
+        };
+      }),
+    };
+
+    return formPayload;
+  };
 
   return (
-    <div className="mainContainer" style={{ marginLeft: state ? "20%" : 0 }}>
+    <div className={`mainContainer ${state ? "drawerOpen" : "drawerClosed"}`}>
       <AppDrawer onChange={setState} />
 
-      <div className="upperDiv">
-        <div className="detailsContainer">
-        <div className="uuidSelect">
-            <select
-              className="uuidSelectBox"
-              value={selectedProductId}
-              onChange={handleProductChange}
-            >
-              <option value="" disabled>
-                Select a Product
-              </option>
-              {productData.map((product) => (
-                <option key={product.product_uuid} value={product.product_uuid}>
-                  {product.product_name}
+      <div className="contentContainer">
+        <div className="upperDiv">
+          <div className="detailsContainer">
+            <div className="uuidSelect">
+              <select
+                className="uuidSelectBox"
+                value={selectedProductId}
+                onChange={handleProductChange}
+              >
+                <option value="" disabled>
+                  Select a Product
                 </option>
-              ))}
-            </select>
-            <Button variant="contained">Contained</Button>
+                {productData.map((product) => (
+                  <option key={product.product_uuid} value={product.product_uuid}>
+                    {product.product_name}
+                  </option>
+                ))}
+              </select>
+              <Button variant="contained" onClick={fetchForms}>Fetch forms</Button>
+            </div>
           </div>
         </div>
-     
+
+        <div className="formsList">
+          {forms.length > 0 && (
+            <div>
+              {forms.map((form, index) => (
+                <div 
+                  key={index} 
+                  className="formItem"
+                >
+                  <div>{index + 1}. {form.name}</div>
+                  <div>{truncateDescription(form.description)}</div>
+                  <IconButton onClick={() => handleFormClick(form)}>
+                    <VisibilityIcon />
+                  </IconButton>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

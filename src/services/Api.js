@@ -8,6 +8,7 @@ const CREATE_FORM = import.meta.env.VITE_CREATE_FORM;
 const PRODUCT_ENDPOINT = import.meta.env.VITE_PRODUCTS_ENDPOINT;
 const GET_FORM = import.meta.env.VITE_GET_FORM;
 const SUBMIT_FORM = import.meta.env.VITE_SUBMIT_FORM;
+const GETALL_FORMS = import.meta.env.VITE_GETALL_FORMS;
 
 
 
@@ -109,5 +110,30 @@ export const getForm = async (formId) => {
 
   catch (error) {
       console.error("Error fetching form details:", error);
+  }
+}
+
+// fetch forms by uuid
+
+export const fetchFormByUUID = async (uuid) => {
+  try {
+    const response = await axios.get(`${BASE_URL}${GETALL_FORMS}/${uuid}`);
+    console.log("API Response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Form fetch failed:", error);
+    throw error; // Re-throw to handle it in the calling function
+  }
+}
+
+//fetch form by id 
+export const fetchFormById = async (id) => {
+  try {
+    const response = await axios.get(`${BASE_URL}${GET_FORM}/${id}`);
+    console.log("API Response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Form fetch failed:", error);
+    throw error; // Re-throw to handle it in the calling function
   }
 }

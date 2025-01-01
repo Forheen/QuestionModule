@@ -138,7 +138,9 @@
   justify-content: flex-end;
   align-items: center;
   color: black;
+  border-radius: 20px;
   /* margin-left: 2px; */
+  margin-bottom: 1%;
 }
 
 .uuidSelectBox
@@ -299,9 +301,3 @@
  {
   background-color: #0367D9;
  }
-
-
-
-
-
-

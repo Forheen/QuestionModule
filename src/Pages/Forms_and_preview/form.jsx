@@ -11,6 +11,7 @@ import IconButton from "@mui/material/IconButton";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import "./form.css";
 import { useNavigate } from "react-router-dom";
+import { Skeleton } from "@mui/material";
 
 export default function Form() {
   const token = useSelector((state) => state.auth.token);
@@ -19,6 +20,7 @@ export default function Form() {
   const [state, setState] = useState(null);
   const [forms, setForms] = useState([]);
   const [formData, setFormData] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -68,6 +70,7 @@ export default function Form() {
   // fetch forms by UUID
   const fetchForms = async () => {
     console.log(selectedProduct);
+    setLoading(true);
     try {
       const response = await fetchFormByUUID(selectedProduct);
       console.log("All forms fetched successfully");
@@ -76,6 +79,9 @@ export default function Form() {
       localStorage.setItem("fetchedForms", response); // Store in localStorage
     } catch (err) {
       console.error("Error fetching form:", err);
+    }
+    finally {
+      setLoading(false);
     }
   };
 
@@ -118,101 +124,6 @@ export default function Form() {
     return description;
   };
 
-  // const constructFormPayload = (formResponse) => {
-  //   let mainOrderCounter = 0;
-
-  //   const processSubQuestions = (subQuestions) => {
-  //     if (!subQuestions) return [];
-
-  //     return subQuestions.map((subQ) => {
-  //       const isYesNo = subQ.type === "Yes/No";
-  //       const isOptions = subQ.type === "options";
-  //       const isImage = subQ.type === "Image";
-  //       const isDate = subQ.type === "Date";
-
-  //       const choices = isYesNo
-  //         ? ["Yes", "No"].map((option, oIndex) => ({
-  //             choice_text: option,
-  //             score: oIndex === 0 ? 5 : 2,
-  //             subquestions: processSubQuestions(subQ.Subquestions[oIndex]),
-  //           }))
-  //         : isOptions
-  //         ? subQ.Choices.map((opt, oIndex) => ({
-  //             choice_text: opt.choice_text,
-  //             score: oIndex === 0 ? 5 : 2,
-  //             subquestions: processSubQuestions(subQ.Subquestions[oIndex]),
-  //           }))
-  //         : undefined;
-
-  //       return {
-  //         question_text: subQ.question_text,
-  //         type:
-  //           isOptions || isYesNo
-  //             ? "Choice"
-  //             : isImage
-  //             ? "Image"
-  //             : isDate
-  //             ? "Date"
-  //             : "Text",
-  //         is_choice: isOptions || isYesNo,
-  //         score: null,
-  //         main_order: ++mainOrderCounter,
-  //         parent_id: subQ.parent_id,
-  //         choice_id: subQ.choice_id,
-  //         choices,
-  //       };
-  //     });
-  //   };
-
-  //   const formPayload = {
-  //     name: formResponse.name,
-  //     description: formResponse.description,
-  //     product_uuid: formResponse.product_uuid,
-  //     version: formResponse.version,
-  //     status: formResponse.status,
-  //     questions: formResponse.questions.map((q) => {
-  //       const isYesNo = q.type === "Yes/No";
-  //       const isOptions = q.type === "options";
-  //       const isImage = q.type === "Image";
-  //       const isDate = q.type === "Date";
-
-  //       const choices = isYesNo
-  //         ? ["Yes", "No"].map((option, oIndex) => ({
-  //             choice_text: option,
-  //             score: oIndex === 0 ? 5 : 2,
-  //             subquestions: processSubQuestions(q.Subquestions[oIndex]),
-  //           }))
-  //         : isOptions
-  //         ? q.Choices.map((opt, oIndex) => ({
-  //             choice_text: opt.choice_text,
-  //             score: oIndex === 0 ? 5 : 2,
-  //             subquestions: processSubQuestions(q.Subquestions[oIndex]),
-  //           }))
-  //         : undefined;
-
-  //       return {
-  //         question_text: q.question_text,
-  //         type:
-  //           isOptions || isYesNo
-  //             ? "Choice"
-  //             : isImage
-  //             ? "Image"
-  //             : isDate
-  //             ? "Date"
-  //             : "Text",
-  //         is_choice: isOptions || isYesNo,
-  //         score: null,
-  //         main_order: ++mainOrderCounter,
-  //         parent_id: null,
-  //         choice_id: null,
-  //         choices,
-  //       };
-  //     }),
-  //   };
-
-  //   return formPayload;
-  // };
-
   return (
     <div className={`mainContainer ${state ? "drawerOpen" : "drawerClosed"}`}>
       <AppDrawer onChange={setState} />
@@ -246,20 +157,28 @@ export default function Form() {
         </div>
 
         <div className="formsList">
-          {forms.length > 0 && (
+          {loading ? (
             <div>
-              {forms.map((form, index) => (
-                <div key={index} className="formItem">
-                  <div>
-                    {index + 1}. {form.name}
-                  </div>
-                  <div>{truncateDescription(form.description)}</div>
-                  <IconButton onClick={() => handleFormClick(form)}>
-                    <VisibilityIcon />
-                  </IconButton>
-                </div>
+              {[...Array(5)].map((_, index) => (
+                <Skeleton key={index} variant="rectangular" height={40}  className="skeletonItem" />
               ))}
             </div>
+          ) : (
+            forms.length > 0 && (
+              <div>
+                {forms.map((form, index) => (
+                  <div key={index} className="formItem">
+                    <div>
+                      {index + 1}. {form.name}
+                    </div>
+                    <div>{truncateDescription(form.description)}</div>
+                    <IconButton onClick={() => handleFormClick(form)}>
+                      <VisibilityIcon />
+                    </IconButton>
+                  </div>
+                ))}
+              </div>
+            )
           )}
         </div>
       </div>

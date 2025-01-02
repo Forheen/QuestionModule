@@ -1,5 +1,5 @@
 import * as bootstrap from "bootstrap";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,  useRef } from "react";
 import AppDrawer from "../../components/AppDrawer";
 import "./CSP_form.css";
 import {
@@ -26,8 +26,14 @@ import { useNavigate } from "react-router-dom";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { fetchProduct } from "../../services/Api";
 import { useSelector } from "react-redux";
+import { gsap } from "gsap";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollToPlugin, ScrollTrigger);
 
 function CSP_form() {
+  const containerRef = useRef(null);
   const [State, setState] = useState(false);
   const [formName, setFormName] = useState("");
   const [formVersion, setFormVersion] = useState(1);
@@ -42,6 +48,60 @@ function CSP_form() {
       ? JSON.parse(savedQuestions)
       : [{ question: "", type: "text", options: [], subQuestions: [] }];
   });
+
+  // animation 
+
+    // Add other existing state variables...
+
+    useEffect(() => {
+      // Smooth scroll setup
+      const container = containerRef.current;
+      
+      const smoothScroll = {
+        ease: 0.9,
+        current: 0,
+        target: 0,
+        lastScroll: 0,
+      };
+  
+      gsap.set(container, {
+        force3D: true,
+        // position: 'fixed',
+        // overflow: 'hidden'
+      });
+  
+      const smoothScrolling = () => {
+        smoothScroll.current = gsap.utils.interpolate(
+          smoothScroll.current,
+          smoothScroll.target,
+          smoothScroll.ease
+        );
+        gsap.to(container, {
+          duration: 0.7,
+          y: -smoothScroll.current,
+          ease: 'power2.out'
+        });
+  
+        requestAnimationFrame(smoothScrolling);
+      };
+  
+      const handleWheel = (e) => {
+        smoothScroll.target = Math.max(
+          0,
+          Math.min(
+            smoothScroll.target + e.deltaY,
+            container.scrollHeight - window.innerHeight
+          )
+        );
+      };
+  
+      window.addEventListener('wheel', handleWheel);
+      smoothScrolling();
+  
+      return () => {
+        window.removeEventListener('wheel', handleWheel);
+      };
+    }, []);
 
   useEffect(() => {
     const savedFormName = localStorage.getItem("formName");
@@ -62,6 +122,9 @@ function CSP_form() {
     localStorage.setItem("description", description);
     localStorage.setItem("selectedProductId", selectedProductId);
   }, [questions, formName, formVersion, description, selectedProductId]);
+
+  
+
 
   useEffect(() => {
     let timeout;
@@ -269,7 +332,7 @@ function CSP_form() {
     <div className="main">
       <div className="outerContainer" style={{ marginLeft: State ? "20%" : 0 }}>
         <AppDrawer onChange={setState} />
-        <div className="innerContainer">
+        <div className="innerContainer" ref={containerRef} >
           <div className="questionDetails">
             <div className="questionDiv">
               <input
@@ -316,7 +379,7 @@ function CSP_form() {
 
           {questions.length > 0 ? (
             questions.map((question, qIndex) => (
-              <div key={qIndex} className="questionBlock">
+              <div key={qIndex} className="questionBlock" >
                 {/* Question Block */}
                 <div className="questionBox">
                   <div className="questionIndex">

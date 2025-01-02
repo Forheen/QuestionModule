@@ -1,0 +1,203 @@
+.body,html
+{
+    background-color: #8065eb;
+}
+
+.mainContainer {
+    width: 100vw;
+    height: 100vh;
+    background-color: #8065eb;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+  }
+  
+  .upperDiv {
+    width: 100%;
+    height: auto;
+    background-color: #8065eb;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-top: 5%;
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+  
+  .CSPcode {
+    width: 100%;
+    max-width: 60%;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  /* Details container for spacing between sections */
+  .detailsContainer {
+    width: 100%;
+    height: 10%;
+    background-color: #8065eb;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .submitDiv
+  {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 3%;
+    padding-bottom: 10%;
+  }
+  
+  /* Button styling */
+  .btn,
+  .btn2 {
+    width: 100%;
+    max-width: 200px; /* Limit button width on larger screens */
+    height: 50px;
+    border: 4px solid #8065eb;
+    border-radius: 10px;
+    background-color: white;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s ease;
+  }
+  #btn {
+    background-color: #007bff;
+    margin-bottom: 5%;
+  }
+  
+  .btn:hover {
+    background-color: #9e8de5;
+  }
+  
+  .btn2 {
+    margin-bottom: 10%;
+  }
+
+  .modalContainer {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 300px;
+}
+  
+  /* Thank You Message Styles */
+  .thankYouMessage {
+    width: 100vw;
+    height: 100vh;
+    padding: 20%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    color: #333;
+  }
+  
+  .msgContainer {
+    width: 100%;
+    height: 80%;
+    background-color: white;
+    border-radius: 20px;
+  }
+  
+  .thankYouMessage h1 {
+    font-size: 2.5rem;
+    color: #007bff;
+  }
+  
+  .thankYouMessage p {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-top: 20px;
+    color: black;
+  }
+  
+  /* Loading State */
+  .loadingContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+  }
+  
+  .loadingContainer p {
+    margin-top: 10px;
+    font-size: 1.2rem;
+    color: #555;
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    /* CSP Code input */
+    .CSPcode {
+      width: 90%; /* Make input full width on smaller screens */
+      margin-left: 5%;
+      margin-right: 5%;
+    }
+  
+    /* Buttons */
+    .btn,
+    .btn2 {
+      width: 80%; /* Make buttons smaller on mobile */
+    }
+  
+    /* Thank You message */
+    .thankYouMessage {
+      padding: 10%;
+    }
+  
+    .thankYouMessage h1 {
+      font-size: 2rem; /* Smaller font for smaller screens */
+    }
+  
+    .thankYouMessage p {
+      font-size: 1rem; /* Smaller font for smaller screens */
+    }
+  
+    .msgContainer {
+      height: auto;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    /* CSP Code input */
+    .CSPcode {
+      width: 100%; /* Make input full width on smaller screens */
+    }
+  
+    /* Buttons */
+    .btn,
+    .btn2 {
+      width: 90%; /* Make buttons even smaller on very small screens */
+    }
+  
+    .thankYouMessage h1 {
+      font-size: 1.8rem; /* Even smaller font size for mobile */
+    }
+  
+    .thankYouMessage p {
+      font-size: 0.9rem; /* Smaller font size */
+    }
+  }
+  

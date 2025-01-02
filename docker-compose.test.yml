@@ -3,35 +3,38 @@ services:
   # Traefik reverse proxy setup
   traefik:
     image: traefik:v2.9
-    container_name: traefik
+    container_name: traefik-dashboard
     restart: always
     command:
       - --api.insecure=true
       - --providers.docker=true
-      - --entrypoints.web.address=:8080  # Changed to use port 8080 instead of 80
-      - --entrypoints.websecure.address=:443
+      - --entrypoints.web.address=:80       # Change entry point to use 8082
+      - --entrypoints.websecure.address=:443  # Optional if HTTPS is needed
     ports:
-      - "8080:8080"  # Map 8080 on host to 8080 in Traefik
-      - "443:443"
+      - "80:80"                          # Map Traefik's HTTP traffic to 8082 on the host
+      - "443:443"                           # Optional HTTPS
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.api.rule=Host(`traefik.localhost`)"
-      - "traefik.http.routers.api.service=api@internal"
-      - "traefik.http.services.api.loadbalancer.server.port=8080"
+      - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.localhost`)"
+      - "traefik.http.routers.traefik-dashboard.service=api@internal"
+      - "traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080"
 
   # Question Module Dashboard
   question_module_dashboard:
     build: 
+      context: .
       dockerfile: Dockerfile
     container_name: questions_module_dashboard
     restart: always
+    environment:
+      - NODE_ENV=production
     volumes:
       - .:/app
       - /app/node_modules
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.qmms.rule=Host(172.203.223.45)"
-      - "traefik.http.routers.qmms.entrypoints=web"  # Use the 'web' entry point created above (on port 8080)
-      - "traefik.http.services.qmms.loadbalancer.server.port=3000"  # Adjust if the app runs on a different port inside the container
+      - "traefik.http.routers.qmms-dashboard.rule=Host(`ec2-98-83-215-5.compute-1.amazonaws.com`)"   # Replace with your public IP
+      - "traefik.http.routers.qmms-dashboard.entrypoints=web"              # Point to Traefik entry point
+      - "traefik.http.services.qmms-dashboard.loadbalancer.server.port=8080" # Match app's internal port

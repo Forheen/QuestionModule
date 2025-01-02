@@ -17,7 +17,14 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import { useNavigate } from 'react-router-dom';
-// import { ReactComponent as Form } from '../assets/form.svg';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { clearToken } from "../redux/authSlice";
+import { useDispatch } from "react-redux";
+import { useAlert } from './Alert/AlertContext';
+import EditNoteIcon from '@mui/icons-material/EditNote';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import HomeIcon from '@mui/icons-material/Home';
+import PageviewIcon from '@mui/icons-material/Pageview';
 
 
 const drawerWidth = '20%';
@@ -96,6 +103,17 @@ export default function AppDrawer(props) {
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
   const { onChange }= props;
+  const dispatch = useDispatch();
+  const {showAlert} = useAlert();
+  
+
+  const handleLogout=()=>
+  {
+    dispatch(clearToken());
+    localStorage.clear();
+    showAlert("success","Logged out successfully");
+    navigate('/');
+  }
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -127,6 +145,19 @@ export default function AppDrawer(props) {
           <Typography variant="h6" noWrap component="div">
             Admin Panel
           </Typography>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleLogout}
+            edge="end"
+            style={{position: 'absolute', right: 0}}
+            sx={{
+              marginRight: 5,
+              ...(open && { display: 'none' }),
+            }}
+          >
+            <LogoutIcon />
+          </IconButton>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
@@ -152,7 +183,7 @@ export default function AppDrawer(props) {
                     justifyContent: 'center',
                   }}
                 >
-                  <InboxIcon />
+                  <HomeIcon />
                 </ListItemIcon>
                 <ListItemText primary={'Home'} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
@@ -173,7 +204,7 @@ export default function AppDrawer(props) {
                     justifyContent: 'center',
                   }}
                 >
-                  <InboxIcon />
+                  <EditNoteIcon />
                   {/* <Form/> */}
                 </ListItemIcon>
                 <ListItemText primary={'CSP form Creation'} sx={{ opacity: open ? 1 : 0 }} />
@@ -194,11 +225,41 @@ export default function AppDrawer(props) {
                     justifyContent: 'center',
                   }}
                 >
-                  <InboxIcon />
+                  <AssessmentIcon />
                 </ListItemIcon>
                 <ListItemText primary={'Reports'} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem> 
+            <ListItem disablePadding sx={{ display: 'block' }} onClick={()=>{navigate('/product2form')}}>
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? 'initial' : 'center',
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : 'auto',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <PageviewIcon />
+                </ListItemIcon>
+                <ListItemText primary={'Forms and Preview'} sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </ListItem> 
+            { open &&
+            (
+
+            <Box sx={{ marginTop: 'auto', padding: 2, textAlign: 'center', color: 'gray' }}>
+          <Typography variant="body2">&#169; 2024 Drishtee</Typography>
+          <Typography variant="body2">@Developed by Chinmoy</Typography>
+        </Box>
+            )
+
+            }
       </Drawer>
     </Box>
   );

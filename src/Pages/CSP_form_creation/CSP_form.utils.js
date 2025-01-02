@@ -200,6 +200,11 @@ export const handleQuestionTypeChange = (qIndex, e, setQuestions) => {
             currentQuestion.options = [];
             currentQuestion.subQuestions = [];
         }
+        else if(value=="Date")
+        {
+            currentQuestion.options = [];
+            currentQuestion.subQuestions = [];
+        }
         else{
             currentQuestion.options = [];
             currentQuestion.subQuestions = [];

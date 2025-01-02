@@ -1,0 +1,156 @@
+/* Overlay styles */
+.overlayPreview {
+    position: fixed; /* Fix the overlay to the screen */
+    top: 0;
+    left: 0;
+    width: 100vw; /* Make it 100% of the viewport width */
+    height: 100vh; /* Make it 100% of the viewport height */
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: flex; /* Flexbox to center content */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    z-index: 9999; /* Ensure it's on top of other content */
+    border-radius: 0 ;
+  }
+  
+  /* Overlay content container */
+  .overlay-content {
+    background-color: #fff;
+    padding: 20px;
+    width: 100%;
+    max-width: 1200px; /* Limit the width of content */
+    height: auto; /* Allow content to grow based on its size */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    max-height: 90vh; /* Max height to avoid overflow */
+    box-sizing: border-box;
+  }
+  
+  /* Back button styles */
+  .back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    align-items: center;
+    /* font-size: 16px; */
+    cursor: pointer;
+    z-index: 10000; /* Ensure it's on top of content */
+    width: 14px;
+    height: 14px;
+  }
+  
+  .back-button:hover {
+    background-color: #c9c9c9;
+  }
+  
+  /* Title styles */
+  h2 {
+    font-size: 24px;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Form container */
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto;
+    max-height: 70vh; /* Limit the form's container height */
+  }
+  
+  /* Question container */
+  .question-container {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+  }
+  
+  /* Sub-question styling */
+  .sub-question {
+    margin-left: 20px;
+    padding-left: 15px;
+    border-left: 3px solid #4caf50;
+  }
+  
+  /* Question text */
+  .question-text {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  /* Input fields styling */
+  .text-input, .date-picker-input, .file-input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    background-color: #f9f9f9;
+  }
+  
+  .text-input:disabled, .date-picker-input:disabled, .file-input:disabled {
+    background-color: #e0e0e0;
+  }
+  
+  /* Radio button container */
+  .radio-container {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .radio-container input[type="radio"] {
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  
+  /* Choice container */
+  .choice-container {
+    margin-bottom: 15px;
+  }
+  
+  /* Image input styling */
+  .image-upload-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .file-input {
+    padding: 8px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .file-input:disabled {
+    background-color: #e0e0e0;
+  }
+  
+  /* Sub-question text styling */
+  .sub-question-text {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 8px;
+  }
+  
+  /* No data message */
+  .no-data {
+    font-size: 16px;
+    color: #f44336; /* Red color to indicate an issue */
+    text-align: center;
+  }
+  

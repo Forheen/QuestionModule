@@ -1,0 +1,122 @@
+/* Container for each question */
+.question-container {
+    width: 80%;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-left: 8rem;
+  }
+  
+  /* Styling for the question text */
+  .question-text {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #333;
+    font-weight: 500;
+    line-height: 1.5;
+    /* padding: 8rem; */
+    
+  }
+  
+  /* Input fields (text, date picker, file) */
+  .text-input,
+  .date-picker-input,
+  .file-input {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  
+  .text-input:focus,
+  .date-picker-input:focus,
+  .file-input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
+  }
+  
+  /* Radio button container */
+  .radio-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 10px;
+  }
+  
+  /* Styling for radio buttons */
+  .radio-container input {
+    margin-right: 8px;
+  }
+  
+  /* Image upload container */
+  .image-upload-container {
+    margin-top: 10px;
+  }
+  
+  /* Uploaded image styling */
+  .uploaded-image {
+    max-width: 100px;
+    max-height: 100px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    object-fit: cover;
+  }
+  
+  /* Sub-question indentation */
+  .sub-question {
+    padding-left: 20px;
+    border-left: 2px solid #ccc;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  
+  /* Media query for mobile responsiveness */
+  @media (max-width: 768px) {
+    .question-text {
+      font-size: 14px;
+    }
+  
+    .text-input,
+    .date-picker-input,
+    .file-input {
+      padding: 10px;
+      font-size: 12px;
+    }
+  
+    .radio-container {
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+  
+    .uploaded-image {
+      max-width: 80px;
+      max-height: 80px;
+    }
+  }
+  
+  /* Media query for larger screens */
+  @media (min-width: 1024px) {
+    .question-container {
+      padding: 20px;
+    }
+  
+    .text-input,
+    .date-picker-input,
+    .file-input {
+      padding: 14px 18px;
+      font-size: 16px;
+    }
+  
+    .radio-container {
+      gap: 15px;
+    }
+  }
+  

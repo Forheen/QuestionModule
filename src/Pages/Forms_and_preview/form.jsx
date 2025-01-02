@@ -12,6 +12,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import "./form.css";
 import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@mui/material";
+import ArticleIcon from '@mui/icons-material/Article';
 
 export default function Form() {
   const token = useSelector((state) => state.auth.token);
@@ -150,7 +151,7 @@ export default function Form() {
                 ))}
               </select>
               <Button variant="contained" onClick={fetchForms}>
-                Fetch forms
+                Forms
               </Button>
             </div>
           </div>
@@ -169,7 +170,8 @@ export default function Form() {
                 {forms.map((form, index) => (
                   <div key={index} className="formItem">
                     <div>
-                      {index + 1}. {form.name}
+                    <ArticleIcon style={{marginRight: '10px'}} />
+                      {form.name}
                     </div>
                     <div>{truncateDescription(form.description)}</div>
                     <IconButton onClick={() => handleFormClick(form)}>

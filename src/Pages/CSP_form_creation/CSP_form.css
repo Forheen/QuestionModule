@@ -1,9 +1,4 @@
 
-
-
-
-
-
 .main {
   width: 100vw;
   height: 100vh;
@@ -108,10 +103,6 @@
   
 }
 
-/* .questionBlock {
-  opacity: 0;
-  will-change: transform, opacity;
-} */
 
 .questionIndex
 {
@@ -149,7 +140,6 @@
   align-items: center;
   color: black;
   border-radius: 20px;
-  /* margin-left: 2px; */
   margin-bottom: 1%;
 }
 

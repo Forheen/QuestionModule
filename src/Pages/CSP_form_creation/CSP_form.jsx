@@ -66,8 +66,6 @@ function CSP_form() {
   
       gsap.set(container, {
         force3D: true,
-        // position: 'fixed',
-        // overflow: 'hidden'
       });
   
       const smoothScrolling = () => {

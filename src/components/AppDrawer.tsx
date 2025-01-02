@@ -26,6 +26,13 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 import HomeIcon from '@mui/icons-material/Home';
 import PageviewIcon from '@mui/icons-material/Pageview';
 
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Button from '@mui/material/Button';
+
 
 const drawerWidth = '20%';
 
@@ -99,6 +106,8 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 export default function AppDrawer(props) {
+  const [openLogoutDialog, setOpenLogoutDialog] = React.useState(false);
+
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
@@ -107,13 +116,21 @@ export default function AppDrawer(props) {
   const {showAlert} = useAlert();
   
 
-  const handleLogout=()=>
-  {
+  const handleLogoutClick = () => {
+    setOpenLogoutDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenLogoutDialog(false);
+  };
+
+  const handleLogout = () => {
     dispatch(clearToken());
     localStorage.clear();
     showAlert("success","Logged out successfully");
     navigate('/');
-  }
+    handleCloseDialog();
+  };
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -148,16 +165,35 @@ export default function AppDrawer(props) {
           <IconButton
             color="inherit"
             aria-label="open drawer"
-            onClick={handleLogout}
+            onClick={handleLogoutClick}
             edge="end"
-            style={{position: 'absolute', right: 0}}
+            style={{
+              position: 'absolute', 
+              right: open ? '0' : '0'  // Adjust position based on drawer state
+            }}
             sx={{
               marginRight: 5,
-              ...(open && { display: 'none' }),
             }}
           >
             <LogoutIcon />
           </IconButton>
+          <Dialog
+        open={openLogoutDialog}
+        onClose={handleCloseDialog}
+      >
+        <DialogTitle>{"Confirm Logout"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to logout?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>No</Button>
+          <Button onClick={handleLogout} autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>

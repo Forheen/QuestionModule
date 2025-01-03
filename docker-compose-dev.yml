@@ -1,0 +1,17 @@
+services:
+  question_module_dashboard:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: questions_module_dashboard
+    restart: always
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - .:/app
+      - /app/node_modules
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.qmms-dashboard.rule=Host(`testinterns.drishtee.in`)"   
+      - "traefik.http.routers.qmms-dashboard.entrypoints=web"              
+      - "traefik.http.services.qmms-dashboard.loadbalancer.server.port=8080" 

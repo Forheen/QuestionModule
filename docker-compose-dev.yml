@@ -15,3 +15,10 @@ services:
       - "traefik.http.routers.qmms-dashboard.rule=Host(`testinterns.drishtee.in`)"   
       - "traefik.http.routers.qmms-dashboard.entrypoints=web"              
       - "traefik.http.services.qmms-dashboard.loadbalancer.server.port=8080" 
+    networks:
+      - dev
+
+networks:
+  dev:
+    external: true
+

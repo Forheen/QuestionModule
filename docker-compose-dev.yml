@@ -5,6 +5,8 @@ services:
       dockerfile: Dockerfile
     container_name: questions_module_dashboard
     restart: always
+    env_file:
+      - ./.env
     environment:
       - NODE_ENV=production
     volumes:

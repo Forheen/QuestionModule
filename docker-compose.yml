@@ -1,0 +1,45 @@
+# services:
+#   question_module_dashboard:
+#     build: 
+#       context: .
+#       dockerfile: Dockerfile
+#     container_name: questions_module_dashboard
+#     restart: always
+#     env_file:
+#       - ./.env
+#     volumes:
+#       - .:/app
+#       - /app/node_modules
+#     labels:
+#       - "traefik.enable=true"
+#       - "traefik.http.routers.qmms-dashboard.rule=Host(`testinterns.drishtee.in`)"   
+#       - "traefik.http.routers.qmms-dashboard.entrypoints=web"              
+#       - "traefik.http.services.qmms-dashboard.loadbalancer.server.port=8080" 
+#     networks:
+#       - dev
+
+# networks:
+#   dev:
+#     external: true
+
+
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: question_module_dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - VITE_HOST=0.0.0.0
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

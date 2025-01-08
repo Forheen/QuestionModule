@@ -5,19 +5,57 @@ import Button from "@mui/material/Button"; // Import MUI Button
 import QuestionRender from '../../components/Form_render/QuestionRender'
 import { submit, getForm } from '../../services/Api';
 import "./Render.css";
+import { Login } from "../../services/Api";
+import {jwtDecode} from 'jwt-decode'; // Correct import
+
 
 export default function Render() {
     const [formData, setFormData] = useState(null);
     const [answers, setAnswers] = useState({});
-    const [loading, setLoading] = useState(false); // Loading state
-    const [success, setSuccess] = useState(false); // Modal state
-    const [formVisible, setFormVisible] = useState(true); // Control form visibility
-
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
+    const [formVisible, setFormVisible] = useState(true);
+    const [isAuthorized, setIsAuthorized] = useState(false);
+    
     const urlParams = new URLSearchParams(window.location.search);
     const formId = urlParams.get("formId");
     const CSP_Code = urlParams.get("CSP_Code");
+    const token = urlParams.get("token");
+    console.log(formId, CSP_Code, token);
 
     useEffect(() => {
+        const verifyToken = async () => {
+            setLoading(true);
+            try {
+                if (!token) {
+                    setIsAuthorized(false);
+                    return;
+                }
+
+                // Decode token and check role
+                const decodedToken = jwtDecode(token);
+                if (decodedToken.role !== 'user') {
+                    setIsAuthorized(false);
+                    return;
+                }
+
+                setIsAuthorized(true);
+            } catch (error) {
+                console.error("Error verifying token:", error);
+                setIsAuthorized(false);
+            } finally {
+                setLoading(false);
+            }
+        };
+        verifyToken();
+    }, [token]);
+
+
+
+    useEffect(() => {
+        if (!isAuthorized) {
+            return;
+        }
         const fetchFormDetails = async () => {
             setLoading(true); // Start loading
             try {
@@ -38,7 +76,7 @@ export default function Render() {
         };
 
         fetchFormDetails();
-    }, []);
+    }, [formId, isAuthorized]);
 
     const handleAnswerChange = (questionId, value) => {
         setAnswers((prev) => ({ ...prev, [questionId]: value }));
@@ -93,6 +131,9 @@ export default function Render() {
                 <p style={{ color: 'white' }}>Loading form, please wait...</p>
             </div>
         );
+    }
+    if (!isAuthorized) {
+        return null;
     }
 
     if (!formVisible) {

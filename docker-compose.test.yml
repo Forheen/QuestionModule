@@ -1,40 +1,27 @@
 
-services:
-  # Traefik reverse proxy setup
-  traefik:
-    image: traefik:v2.9
-    container_name: traefik-dashboard
-    restart: always
-    command:
-      - --api.insecure=true
-      - --providers.docker=true
-      - --entrypoints.web.address=:80       # Change entry point to use 8082
-      - --entrypoints.websecure.address=:443  # Optional if HTTPS is needed
-    ports:
-      - "80:80"                          # Map Traefik's HTTP traffic to 8082 on the host
-      - "443:443"                           # Optional HTTPS
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.localhost`)"
-      - "traefik.http.routers.traefik-dashboard.service=api@internal"
-      - "traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080"
+version: '3.8'
 
-  # Question Module Dashboard
-  question_module_dashboard:
-    build: 
+services:
+  question-module-dev:
+    build:
       context: .
       dockerfile: Dockerfile
-    container_name: questions_module_dashboard
-    restart: always
-    environment:
-      - NODE_ENV=production
+    container_name: question_module_dev
     volumes:
       - .:/app
       - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - VITE_HOST=0.0.0.0
+    env_file: ./env
+    networks:
+      - dev
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.qmms-dashboard.rule=Host(`ec2-98-83-215-5.compute-1.amazonaws.com`)"   # Replace with your public IP
-      - "traefik.http.routers.qmms-dashboard.entrypoints=web"              # Point to Traefik entry point
-      - "traefik.http.services.qmms-dashboard.loadbalancer.server.port=8080" # Match app's internal port
+       - "traefik.enable=true"
+       - "traefik.http.routers.question-module-dev.rule=Host(`testinterns.drishtee.in`)"   
+       - "traefik.http.routers.question-module-dev.entrypoints=web"              
+       - "traefik.http.services.question-module-dev.loadbalancer.server.port=8080" 
+
+networks:
+  dev:
+    external: true

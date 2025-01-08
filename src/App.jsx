@@ -11,7 +11,7 @@ import GlobalAlert from "./components/Alert/GlobalAlert";
 import { useAlert } from "./components/Alert/AlertContext";
 import Preview from "./components/PreviewOverlay/Preview"; // Assuming this is the location of the Preview component
 import { useLocation } from "react-router-dom";
-import Render from "./Pages/Form_render/render";
+import RenderForm from "./Pages/Form_render/Render"
 import FormPreview from "./components/Forms_and_preview/FormPreview";
 
 function App() {
@@ -59,7 +59,7 @@ function App() {
         <Route
           path="/render"
           element={
-              <Render/>
+              <RenderForm/>
           }
         />
                 <Route

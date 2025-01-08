@@ -9,7 +9,7 @@ import { Login } from "../../services/Api";
 import {jwtDecode} from 'jwt-decode'; // Correct import
 
 
-export default function Render() {
+export default function RenderForm() {
     const [formData, setFormData] = useState(null);
     const [answers, setAnswers] = useState({});
     const [loading, setLoading] = useState(false);

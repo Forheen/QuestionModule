@@ -28,9 +28,9 @@ COPY . .
 
 # Add environment variables for Vite
 ENV HOST=0.0.0.0
-ENV PORT=5173
+ENV PORT=8080
 
-EXPOSE 5173
+EXPOSE 8080
 
 # Update command to use host flag
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

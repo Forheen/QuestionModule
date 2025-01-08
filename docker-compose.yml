@@ -27,10 +27,12 @@ version: '3.8'
 
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: question_module_dev
     ports:
-      - "5173:5173"
+      - "8080:8080"
     volumes:
       - .:/app
       - /app/node_modules

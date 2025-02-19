@@ -1,5 +1,3 @@
-
-
 import axios from "axios";
 import { useSelector } from 'react-redux';
 
@@ -9,6 +7,7 @@ const PRODUCT_ENDPOINT = import.meta.env.VITE_PRODUCTS_ENDPOINT;
 const GET_FORM = import.meta.env.VITE_GET_FORM;
 const SUBMIT_FORM = import.meta.env.VITE_SUBMIT_FORM;
 const GETALL_FORMS = import.meta.env.VITE_GETALL_FORMS;
+const GETALL_SUBMISSIONS = import.meta.env.VITE_GETALL_SUBMISSIONS;
 
 
 
@@ -137,3 +136,38 @@ export const fetchFormByUUID = async (uuid) => {
 //     throw error; // Re-throw to handle it in the calling function
 //   }
 // }
+
+export const fetchFormByProduct = async (uuid) => {
+  try {
+    const response = await fetch(`${BASE_URL}${GETALL_FORMS}/${uuid}`);
+    if (!response.ok) {
+      throw new Error(`Error fetching forms: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching forms:", error);
+    throw error; // Re-throw the error to handle it in the calling function
+  }
+};
+
+// submission list 
+export const fetchSubmissionListById = async (formId) => {
+  console.log("Form ID:", formId);
+  const url = `${BASE_URL}${GETALL_SUBMISSIONS}`; // No need to append formId in URL
+
+  console.log("Fetching URL:", url);
+
+  try {
+    const response = await axios.post(`${BASE_URL}${GETALL_SUBMISSIONS}/${formId}`, { 
+    });
+
+    console.log("Response status:", response.status);
+    console.log("Response data:", response.data);
+
+    return await response.data;
+  } catch (error) {
+    console.error("Error fetching form details:", error.response ? error.response.data : error.message);
+    throw error;
+  }
+};

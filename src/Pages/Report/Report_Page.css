@@ -1,51 +1,132 @@
-.mainContainer
-{
+.mainContainerDiv {
     width: 100vw;
-    height: 100vw;
+    height: 100vh;
     background-color: #8065EB;
+    transition: margin-left 0.3s;
+}
+
+.mainContainerDiv.drawerOpen {
+    margin-left: 20%;
+}
+
+.mainContainerDiv.drawerClosed {
+    margin-left: 5%;
+}
+
+.contentContainerDiv {
+    padding: 20px;
+    /* border: 2px solid #ccc; */
+    border-radius: 8px;
+    background-color: #8065EB;
+    margin: 20px;
+    margin-top: 10%;
+    width: 90%;
+    margin-left: 5%;
+}
+
+.upperContainer {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    
+  
+    
+}
+
+.formsList {
+    padding: 10px;
+    border: 1px solid #ccc;
 
 }
 
-.upperDiv
-{
+.detailsContainerDiv {
     width: 100%;
-    height: 100%;
     background-color: #8065EB;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    /* align-items: center; */
-}
-
-.detailsContainer
-{
-    width: 100%;
-    height: 10%;
-    background-color: #8065EB;
-    padding: 8rem;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    padding: 10px;
+    margin-bottom: 20px;
+    height: 10%;
 }
 
-.btn
-{
-    width:'10rem';
-    height:'3rem';
-    border:'4px';
-    border-radius:'10px';
+.btn {
+    width: 10rem;
+    height: 3rem;
+    border: 4px solid;
+    border-radius: 10px;
     background-color: white;
     position: relative;
-    
 }
-.btn:hover
-{
+
+.btn2 {
+    width: 100%;
+    height: 3rem;
+    border: 4px solid;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10%;
+}
+
+.btn:hover {
     background-color: #9e8de5;
 }
 
-.dropDpwn
+
+
+.uuidSelectDiv {
+    width: 100%;
+    align-items: center;
+    border: none;
+    padding: 2%;
+    display: flex;
+    flex-direction: row;
+    
+    color: black;
+    gap: 5%;
+    background-color: #f0f0f0;
+}
+
+.uuidSelectBox {
+    width: 30%;
+    height: 35px;
+    border-radius: 30px;
+    align-items: center;
+    border: none;
+    padding: 2px;
+    color: black;
+}
+
+.formItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    margin: 5px 0;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+    margin-left: 5%;
+    width: 90%;
+}
+
+.formItem:hover {
+    background-color: #e0e0e0;
+}
+.skeletonItem
 {
-    width: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+    margin-left: 5%;
+    margin-bottom: 10px;
+    width: 90%;
 }

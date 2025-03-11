@@ -14,6 +14,32 @@ const FormResponses = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+    const [totalScores, setTotalScores] = useState({});
+  
+    // Calculate total scores
+    useEffect(() => {
+      const scores = {};
+      
+      submissions.forEach((submission) => {
+        let totalScore = 0;
+        const groupedQuestions = groupQuestions(submission.answers);
+    
+        groupedQuestions.forEach((question) => {
+          totalScore += Number(question.choice_score) || 0;
+          question.subquestions.forEach((subQ) => {
+            totalScore += Number(subQ.choice_score) || 0;
+          });
+        });
+    
+        // Ensure score is set correctly for each submission
+        scores[submission.submission_id] = totalScore;
+      });
+    
+      console.log("Updated Scores:", scores); // Debugging line
+      setTotalScores(scores);
+    }, [submissions]);
+    
+
   useEffect(() => {
     const fetchSubmissions = async () => {
       try {
@@ -189,6 +215,14 @@ const FormResponses = () => {
                     </tr>
                   </React.Fragment>
                 ))}
+                                <tr style={{ backgroundColor: "#f1f1f1", fontWeight: "bold" }}>
+                  <td colSpan="3">
+                    Total Score
+                  </td>
+                  <td>
+                    {totalScores[submission.submission_id] || 0}
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>

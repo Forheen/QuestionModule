@@ -1,16 +1,46 @@
 import React from "react";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
+import { useState ,useEffect} from "react";
 
 const FormResponses = ({ submissions }) => {
   console.log("Received Submissions:", submissions);
+  const [totalScores, setTotalScores] = useState({});
+
+  // Calculate total scores
+  useEffect(() => {
+    const scores = {};
+    flattenedSubmissions.forEach((submission) => {
+      let totalScore = 0;
+      const groupedQuestions = groupQuestions(submission.answers);
+
+      groupedQuestions.forEach((question) => {
+        totalScore += Number(question.marks) || 0;
+        question.subquestions.forEach((subQ) => {
+          totalScore += Number(subQ.marks) || 0;
+        });
+      });
+
+      scores[submission.submission_id] = totalScore;
+    });
+    setTotalScores(scores);
+  }, [submissions]);
+
+  console.log("Total Scores:", totalScores);
 
   // Flatten the array to handle nested submissions
   const flattenedSubmissions = submissions.flat();
 
   if (!flattenedSubmissions || flattenedSubmissions.length === 0) {
     return (
-      <div style={{ maxWidth: "800px", margin: "auto", padding: "20px", fontFamily: "Arial, sans-serif" }}>
+      <div
+        style={{
+          maxWidth: "800px",
+          margin: "auto",
+          padding: "20px",
+          fontFamily: "Arial, sans-serif",
+        }}
+      >
         <h2>📄 Form Responses</h2>
         <p style={{ color: "red" }}>⚠️ No responses found.</p>
       </div>
@@ -84,18 +114,39 @@ const FormResponses = ({ submissions }) => {
   };
 
   return (
-    <div style={{ maxWidth: "90%", margin: "auto", padding: "20px", fontFamily: "Arial, sans-serif" }}>
+    <div
+      style={{
+        maxWidth: "90%",
+        margin: "auto",
+        padding: "20px",
+        fontFamily: "Arial, sans-serif",
+      }}
+    >
       <h2>📄 Form Responses</h2>
+      <h2>{totalScores}</h2>
       {flattenedSubmissions.map((submission, index) => {
         const groupedQuestions = groupQuestions(submission.answers);
-
+        let totalScore = 0;
         return (
           <div key={submission.submission_id} style={{ marginBottom: "30px" }}>
-            <h3>{index + 1}. {submission.form_name}</h3>
-            <p><b>CSP Code:</b> {submission.csp_code}</p>
-            <p><b>Submitted At:</b> {new Date(submission.submitted_at).toLocaleString()}</p>
+            <h3>
+              {index + 1}. {submission.form_name}
+            </h3>
+            <p>
+              <b>CSP Code:</b> {submission.csp_code}
+            </p>
+            <p>
+              <b>Submitted At:</b>{" "}
+              {new Date(submission.submitted_at).toLocaleString()}
+            </p>
 
-            <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "10px" }}>
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "collapse",
+                marginTop: "10px",
+              }}
+            >
               <thead>
                 <tr style={{ backgroundColor: "#007BFF", color: "white" }}>
                   <th style={styles.th}>#</th>
@@ -107,23 +158,52 @@ const FormResponses = ({ submissions }) => {
               <tbody>
                 {groupedQuestions.map((question, qIndex) => (
                   <React.Fragment key={question.question_id}>
-                    <tr style={qIndex % 2 === 0 ? styles.evenRow : styles.oddRow}>
+                    <tr
+                      style={qIndex % 2 === 0 ? styles.evenRow : styles.oddRow}
+                    >
                       <td style={styles.td}>{qIndex + 1}</td>
-                      <td style={styles.td}><b>{question.question_text}</b></td>
-                      <td style={styles.td}>{question.answer_text || question.choice_text || "N/A"}</td>
-                      <td style={styles.td}>{question.marks !== undefined ? question.marks : "N/A"}</td>
+                      <td style={styles.td}>
+                        <b>{question.question_text}</b>
+                      </td>
+                      <td style={styles.td}>
+                        {question.answer_text || question.choice_text || "N/A"}
+                      </td>
+                      <td style={styles.td}>
+                        {question.marks !== undefined ? question.marks : "N/A"}
+                      </td>
                     </tr>
 
                     {question.subquestions.map((subQ, subIndex) => (
-                      <tr key={subQ.question_id} style={subIndex % 2 === 0 ? styles.evenRow : styles.oddRow}>
-                        <td style={styles.td}>{qIndex + 1}.{subIndex + 1}</td>
-                        <td style={styles.td}>&nbsp;&nbsp;&nbsp;↳ {subQ.question_text}</td>
-                        <td style={styles.td}>{subQ.answer_text || subQ.choice_text || "N/A"}</td>
-                        <td style={styles.td}>{subQ.marks !== undefined ? subQ.marks : "N/A"}</td>
+                      <tr
+                        key={subQ.question_id}
+                        style={
+                          subIndex % 2 === 0 ? styles.evenRow : styles.oddRow
+                        }
+                      >
+                        <td style={styles.td}>
+                          {qIndex + 1}.{subIndex + 1}
+                        </td>
+                        <td style={styles.td}>
+                          &nbsp;&nbsp;&nbsp;↳ {subQ.question_text}
+                        </td>
+                        <td style={styles.td}>
+                          {subQ.answer_text || subQ.choice_text || "N/A"}
+                        </td>
+                        <td style={styles.td}>
+                          {subQ.marks !== undefined ? subQ.marks : "N/A"}
+                        </td>
                       </tr>
                     ))}
                   </React.Fragment>
                 ))}
+                <tr style={{ backgroundColor: "#f1f1f1", fontWeight: "bold" }}>
+                  <td colSpan="3" style={styles.td}>
+                    Total Score
+                  </td>
+                  <td style={styles.td}>
+                    {totalScores[submission.submission_id] || 0}
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -131,7 +211,7 @@ const FormResponses = ({ submissions }) => {
       })}
 
       <button onClick={downloadPDF} style={styles.button}>
-        Download as PDF
+   
       </button>
     </div>
   );

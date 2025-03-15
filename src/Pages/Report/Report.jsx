@@ -14,31 +14,30 @@ const FormResponses = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-    const [totalScores, setTotalScores] = useState({});
-  
-    // Calculate total scores
-    useEffect(() => {
-      const scores = {};
-      
-      submissions.forEach((submission) => {
-        let totalScore = 0;
-        const groupedQuestions = groupQuestions(submission.answers);
-    
-        groupedQuestions.forEach((question) => {
-          totalScore += Number(question.choice_score) || 0;
-          question.subquestions.forEach((subQ) => {
-            totalScore += Number(subQ.choice_score) || 0;
-          });
+  const [totalScores, setTotalScores] = useState({});
+
+  // Calculate total scores
+  useEffect(() => {
+    const scores = {};
+
+    submissions.forEach((submission) => {
+      let totalScore = 0;
+      const groupedQuestions = groupQuestions(submission.answers);
+
+      groupedQuestions.forEach((question) => {
+        totalScore += Number(question.choice_score) || 0;
+        question.subquestions.forEach((subQ) => {
+          totalScore += Number(subQ.choice_score) || 0;
         });
-    
-        // Ensure score is set correctly for each submission
-        scores[submission.submission_id] = totalScore;
       });
-    
-      console.log("Updated Scores:", scores); // Debugging line
-      setTotalScores(scores);
-    }, [submissions]);
-    
+
+      // Ensure score is set correctly for each submission
+      scores[submission.submission_id] = totalScore;
+    });
+
+    console.log("Updated Scores:", scores); // Debugging line
+    setTotalScores(scores);
+  }, [submissions]);
 
   useEffect(() => {
     const fetchSubmissions = async () => {
@@ -62,21 +61,44 @@ const FormResponses = () => {
   if (!submissions || submissions.length === 0)
     return <p>No responses found.</p>;
 
+  // const groupQuestions = (answers) => {
+  //   const questionMap = {};
+  //   const grouped = [];
+
+  //   answers.forEach((answer) => {
+  //     if (answer.parent_id) {
+  //       if (!questionMap[answer.parent_id]) {
+  //         questionMap[answer.parent_id] = { subquestions: [] };
+  //       }
+  //       questionMap[answer.parent_id].subquestions.push(answer);
+  //     } else {
+  //       questionMap[answer.question_id] = { ...answer, subquestions: [] };
+  //       grouped.push(questionMap[answer.question_id]);
+  //     }
+  //   });
+  //   return grouped;
+  // };
+
   const groupQuestions = (answers) => {
     const questionMap = {};
     const grouped = [];
 
+    // First, initialize all questions in the map
     answers.forEach((answer) => {
-      if (answer.parent_id) {
-        if (!questionMap[answer.parent_id]) {
-          questionMap[answer.parent_id] = { subquestions: [] };
-        }
-        questionMap[answer.parent_id].subquestions.push(answer);
-      } else {
-        questionMap[answer.question_id] = { ...answer, subquestions: [] };
+      questionMap[answer.question_id] = { ...answer, subquestions: [] };
+    });
+
+    // Now, assign children to parents
+    answers.forEach((answer) => {
+      if (answer.parent_id && questionMap[answer.parent_id]) {
+        questionMap[answer.parent_id].subquestions.push(
+          questionMap[answer.question_id]
+        );
+      } else if (!answer.parent_id) {
         grouped.push(questionMap[answer.question_id]);
       }
     });
+
     return grouped;
   };
 
@@ -133,6 +155,10 @@ const FormResponses = () => {
     doc.save(`Form_Submissions.pdf`);
   };
 
+  const isImageUrl = (url) => {
+    return url.match(/\.(jpeg|jpg|gif|png|webp)$/) !== null;
+  };
+
   return (
     <div
       style={{
@@ -184,10 +210,44 @@ const FormResponses = () => {
                 {groupedQuestions.map((question, qIndex) => (
                   <React.Fragment key={question.question_id}>
                     <tr>
-                      <td style={{paddingLeft:'10px'}}>{qIndex + 1}</td>
+                      <td style={{ paddingLeft: "10px" }}>{qIndex + 1}</td>
                       <td>{question.question_text}</td>
                       <td>
-                        {question.answer_text || question.choice_text || "N/A"}
+                        {question.answer_text || question.choice_text ? (
+                          isImageUrl(
+                            question.answer_text || question.choice_text
+                          ) ? (
+                            <img
+                              src={question.answer_text || question.choice_text}
+                              alt="response"
+                              style={{
+                                maxWidth: "100px",
+                                maxHeight: "100px",
+                                borderRadius: "5px",
+                                border: "1px solid #ccc",
+                              }}
+                            />
+                          ) : question.answer_text?.startsWith("http") ||
+                            question.choice_text?.startsWith("http") ? (
+                            <a
+                              href={
+                                question.answer_text || question.choice_text
+                              }
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                color: "#007BFF",
+                                textDecoration: "underline",
+                              }}
+                            >
+                              {question.answer_text || question.choice_text}
+                            </a>
+                          ) : (
+                            question.answer_text || question.choice_text
+                          )
+                        ) : (
+                          "N/A"
+                        )}
                       </td>
                       <td>
                         {question.choice_score !== undefined
@@ -195,16 +255,50 @@ const FormResponses = () => {
                           : "N/A"}
                       </td>
                     </tr>
+
                     {question.subquestions.map((subQ, subIndex) => (
                       <tr key={subQ.question_id}>
                         <td>
                           {qIndex + 1}.{subIndex + 1}
                         </td>
                         <td>&nbsp;&nbsp;&nbsp;↳ {subQ.question_text}</td>
-                        <td>{subQ.answer_text || subQ.choice_text || "N/A"}</td>
+                        <td>
+                          {subQ.answer_text || subQ.choice_text ? (
+                            isImageUrl(subQ.answer_text || subQ.choice_text) ? (
+                              <img
+                                src={subQ.answer_text || subQ.choice_text}
+                                alt="response"
+                                style={{
+                                  maxWidth: "100px",
+                                  maxHeight: "100px",
+                                  borderRadius: "5px",
+                                  border: "1px solid #ccc",
+                                }}
+                              />
+                            ) : subQ.answer_text?.startsWith("http") ||
+                              subQ.choice_text?.startsWith("http") ? (
+                              <a
+                                href={subQ.answer_text || subQ.choice_text}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                  color: "#007BFF",
+                                  textDecoration: "underline",
+                                }}
+                              >
+                                {subQ.answer_text || subQ.choice_text}
+                              </a>
+                            ) : (
+                              subQ.answer_text || subQ.choice_text
+                            )
+                          ) : (
+                            "N/A"
+                          )}
+                        </td>
                         <td>{subQ.marks !== undefined ? subQ.marks : "N/A"}</td>
                       </tr>
                     ))}
+
                     {/* Horizontal line after each question */}
                     <tr>
                       <td colSpan="4">
@@ -215,13 +309,9 @@ const FormResponses = () => {
                     </tr>
                   </React.Fragment>
                 ))}
-                                <tr style={{ backgroundColor: "#f1f1f1", fontWeight: "bold" }}>
-                  <td colSpan="3">
-                    Total Score
-                  </td>
-                  <td>
-                    {totalScores[submission.submission_id] || 0}
-                  </td>
+                <tr style={{ backgroundColor: "#f1f1f1", fontWeight: "bold" }}>
+                  <td colSpan="3">Total Score</td>
+                  <td>{totalScores[submission.submission_id] || 0}</td>
                 </tr>
               </tbody>
             </table>

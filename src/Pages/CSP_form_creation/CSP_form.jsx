@@ -219,6 +219,7 @@ function CSP_form() {
     };
 
     try {
+      console.log("Submitting form:", formPayload);
       const response = await Form_Creation(formPayload);
 
       if (!response.ok) {

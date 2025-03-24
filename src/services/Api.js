@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const CREATE_FORM = import.meta.env.VITE_CREATE_FORM;
@@ -8,6 +8,7 @@ const GET_FORM = import.meta.env.VITE_GET_FORM;
 const SUBMIT_FORM = import.meta.env.VITE_SUBMIT_FORM;
 const GETALL_FORMS = import.meta.env.VITE_GETALL_FORMS;
 const GETALL_SUBMISSIONS = import.meta.env.VITE_GETALL_SUBMISSIONS;
+const GET_REPORT_BY_PRODUCT_UUID = import.meta.env.VITE_GET_REPORT_BY_PRODUCT_UUID ;
 
 
 
@@ -15,13 +16,16 @@ const GETALL_SUBMISSIONS = import.meta.env.VITE_GETALL_SUBMISSIONS;
 // form creation api
 export const Form_Creation = async (formPayload) => {
   try {
+    console.log(JSON.stringify(formPayload));
 
     const response = await fetch(`${BASE_URL}${CREATE_FORM}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(formPayload),
+      
     });
     if (!response.ok) {
       const errorDetails = await response.text(); // Capture server response
@@ -125,18 +129,7 @@ export const fetchFormByUUID = async (uuid) => {
   }
 }
 
-//fetch form by id 
-// export const fetchFormById = async (id) => {
-//   try {
-//     const response = await axios.get(`${BASE_URL}${GET_FORM}/${id}`);
-//     console.log("API Response:", response.data);
-//     return response.data;
-//   } catch (error) {
-//     console.error("Form fetch failed:", error);
-//     throw error; // Re-throw to handle it in the calling function
-//   }
-// }
-
+//fetch all forms by product
 export const fetchFormByProduct = async (uuid) => {
   try {
     const response = await fetch(`${BASE_URL}${GETALL_FORMS}/${uuid}`);
@@ -168,6 +161,22 @@ export const fetchSubmissionListById = async (formId) => {
     return await response.data;
   } catch (error) {
     console.error("Error fetching form details:", error.response ? error.response.data : error.message);
+    throw error;
+  }
+};
+
+// fetch csp report by product id
+export const fetchCSPReportByProductID = async (code, productID) => {
+  try {
+    const response = await axios.post(`${BASE_URL}${GET_REPORT_BY_PRODUCT_UUID}`, {
+      csp_code: code,
+      productID: productID,
+    });
+
+    console.log("Selected Submission Data:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching form data:", error);
     throw error;
   }
 };

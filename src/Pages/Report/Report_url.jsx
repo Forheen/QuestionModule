@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
-import axios from "axios";
+import { fetchCSPReportByProductID } from "../../services/Api";
 
 const useQuery = () => new URLSearchParams(useLocation().search);
 
@@ -13,8 +13,20 @@ const FormResponses = () => {
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [totalScores, setTotalScores] = useState({});
+  const [grandTotal, setGrandTotal] = useState(0);
+  const[totalVisited, setTotalVisited] = useState(0);
+
+  // data for the sequestioal redering of the form
+
+  const sequence = [
+    "47371f8d-cb1a-465d-a5b4-b906d8f657e3",
+    "6a893c36-a293-4cc4-88bd-8f88e99943bb",
+    "8ee21e46-ddcb-4ac5-b280-c54f22636dca",
+    "c5c3d43a-f2db-4d16-b923-40b66e872292",
+    "9de431cb-4ef5-413a-9814-291c56210406",
+    "3a38913a-0be5-4f01-b265-3a39a69e0473",
+  ];
 
   // Calculate total scores
   useEffect(() => {
@@ -36,17 +48,25 @@ const FormResponses = () => {
     });
 
     console.log("Updated Scores:", scores); // Debugging line
+    setGrandTotal(Object.values(scores).reduce((acc, score) => acc + score, 0));
     setTotalScores(scores);
   }, [submissions]);
 
+  //fetch submission list by product id
   useEffect(() => {
     const fetchSubmissions = async () => {
       try {
-        const response = await axios.post(
-          "http://testinterns-api.drishtee.in/api/forms/get-csp-report-by-product-id",
-          { csp_code, productID: product_id }
+        const response = await fetchCSPReportByProductID(csp_code,product_id);
+
+        // Reorder response based on `sequence`
+        const sortedData = response.sort(
+          (a, b) => sequence.indexOf(a.form_id) - sequence.indexOf(b.form_id)
         );
-        setSubmissions(response.data);
+
+        setTotalVisited(sortedData.length);
+
+        console.log("Sorted Data:", sortedData); 
+        setSubmissions(sortedData);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -56,28 +76,14 @@ const FormResponses = () => {
     fetchSubmissions();
   }, [product_id, csp_code]);
 
+  //loading if data is not fetched
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p style={{ color: "red" }}>⚠️ {error}</p>;
   if (!submissions || submissions.length === 0)
     return <p>No responses found.</p>;
 
-  // const groupQuestions = (answers) => {
-  //   const questionMap = {};
-  //   const grouped = [];
-
-  //   answers.forEach((answer) => {
-  //     if (answer.parent_id) {
-  //       if (!questionMap[answer.parent_id]) {
-  //         questionMap[answer.parent_id] = { subquestions: [] };
-  //       }
-  //       questionMap[answer.parent_id].subquestions.push(answer);
-  //     } else {
-  //       questionMap[answer.question_id] = { ...answer, subquestions: [] };
-  //       grouped.push(questionMap[answer.question_id]);
-  //     }
-  //   });
-  //   return grouped;
-  // };
+  //group question accoring to parent id
 
   const groupQuestions = (answers) => {
     const questionMap = {};
@@ -101,6 +107,8 @@ const FormResponses = () => {
 
     return grouped;
   };
+
+  //download the response in pdf format
 
   const downloadPDF = () => {
     const doc = new jsPDF();
@@ -169,6 +177,18 @@ const FormResponses = () => {
       }}
     >
       <h2>📄 Form Responses</h2>
+      <div style={{ display: "flex", flexDirection:'row',justifyContent: "space-between" }}>
+
+      <p>
+        <b>Grand total score:</b> {grandTotal}
+      </p>
+      <p>
+        <b>Total visited form:</b> {totalVisited}
+      </p>
+      <p>
+      <b>Total unvisited form:</b> {5-totalVisited}
+      </p>
+      </div>
       {submissions.map((submission, index) => {
         const groupedQuestions = groupQuestions(submission.answers);
         return (
@@ -183,6 +203,7 @@ const FormResponses = () => {
               <b>Submitted At:</b>{" "}
               {new Date(submission.submitted_at).toLocaleString()}
             </p>
+
             <table
               style={{
                 width: "100%",

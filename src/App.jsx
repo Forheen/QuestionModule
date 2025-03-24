@@ -13,7 +13,7 @@ import Preview from "./components/PreviewOverlay/Preview"; // Assuming this is t
 import { useLocation } from "react-router-dom";
 import RenderForm from "./Pages/Form_render/Render";
 import FormPreview from "./components/Forms_and_preview/FormPreview";
-import FormResponses from "./Pages/Report/Report";
+import FormResponses from "./Pages/Report/Report_url";
 
 function App() {
   const { alert, clearAlert } = useAlert();

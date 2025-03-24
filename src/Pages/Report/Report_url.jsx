@@ -188,7 +188,7 @@ const FormResponses = () => {
         <b>Total visited form:</b> {totalVisited}
       </p>
       <p>
-      <b>Total unvisited form:</b> {5-totalVisited}
+      <b>Total unvisited form:</b> {6-totalVisited}
       </p>
       </div>
       {submissions.map((submission, index) => {

@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
+import Lottie from "lottie-react";
 import { fetchCSPReportByProductID } from "../../services/Api";
+import animationData from "../../assets/Loading_updated.json";
 
 const useQuery = () => new URLSearchParams(useLocation().search);
 
@@ -78,7 +80,7 @@ const FormResponses = () => {
 
   //loading if data is not fetched
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <div style={{display:'flex',justifyContent:'center',alignItems:'center',width:'100wh',height:'100vh',flex:1}}><Lottie animationData={animationData} loop={true} /></div>;
   if (error) return <p style={{ color: "red" }}>⚠️ {error}</p>;
   if (!submissions || submissions.length === 0)
     return <p>No responses found.</p>;

@@ -9,7 +9,7 @@ const SUBMIT_FORM = import.meta.env.VITE_SUBMIT_FORM;
 const GETALL_FORMS = import.meta.env.VITE_GETALL_FORMS;
 const GETALL_SUBMISSIONS = import.meta.env.VITE_GETALL_SUBMISSIONS;
 const GET_REPORT_BY_PRODUCT_UUID = import.meta.env.VITE_GET_REPORT_BY_PRODUCT_UUID ;
-
+const GET_REPORT_BY_CSPCODE_DATE = import.meta.env.VITE_GET_REPORT_BY_PRODUCT_UUID_AND_DATE;
 
 
 
@@ -171,6 +171,23 @@ export const fetchCSPReportByProductID = async (code, productID) => {
     const response = await axios.post(`${BASE_URL}${GET_REPORT_BY_PRODUCT_UUID}`, {
       csp_code: code,
       productID: productID,
+    });
+
+    console.log("Selected Submission Data:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching form data:", error);
+    throw error;
+  }
+};
+
+export const fetchCSPReportByProductIDandDate = async (code, date,productID) => {
+  try {
+    const response = await axios.post(`${BASE_URL}${GET_REPORT_BY_CSPCODE_DATE}`, {
+      csp_code: code,
+      date : date,
+      product_id: productID,
+
     });
 
     console.log("Selected Submission Data:", response.data);

@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import Lottie from "lottie-react";
-import { fetchCSPReportByProductID } from "../../services/Api";
+import { fetchCSPReportByProductID, fetchCSPReportByProductIDandDate } from "../../services/Api";
 import animationData from "../../assets/Loading_updated.json";
 
 const useQuery = () => new URLSearchParams(useLocation().search);
@@ -12,14 +12,13 @@ const FormResponses = () => {
   const query = useQuery();
   const product_id = query.get("product_id");
   const csp_code = query.get("csp_code");
+  const date = query.get("date");
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalScores, setTotalScores] = useState({});
   const [grandTotal, setGrandTotal] = useState(0);
-  const[totalVisited, setTotalVisited] = useState(0);
-
-  // data for the sequestioal redering of the form
+  const [totalVisited, setTotalVisited] = useState(0);
 
   const sequence = [
     "47371f8d-cb1a-465d-a5b4-b906d8f657e3",
@@ -30,10 +29,27 @@ const FormResponses = () => {
     "3a38913a-0be5-4f01-b265-3a39a69e0473",
   ];
 
-  // Calculate total scores
+  const groupQuestions = (answers) => {
+    const questionMap = {};
+    const grouped = [];
+
+    answers.forEach((answer) => {
+      questionMap[answer.question_id] = { ...answer, subquestions: [] };
+    });
+
+    answers.forEach((answer) => {
+      if (answer.parent_id && questionMap[answer.parent_id]) {
+        questionMap[answer.parent_id].subquestions.push(questionMap[answer.question_id]);
+      } else if (!answer.parent_id) {
+        grouped.push(questionMap[answer.question_id]);
+      }
+    });
+
+    return grouped;
+  };
+
   useEffect(() => {
     const scores = {};
-
     submissions.forEach((submission) => {
       let totalScore = 0;
       const groupedQuestions = groupQuestions(submission.answers);
@@ -45,29 +61,29 @@ const FormResponses = () => {
         });
       });
 
-      // Ensure score is set correctly for each submission
       scores[submission.submission_id] = totalScore;
     });
 
-    console.log("Updated Scores:", scores); // Debugging line
     setGrandTotal(Object.values(scores).reduce((acc, score) => acc + score, 0));
     setTotalScores(scores);
   }, [submissions]);
 
-  //fetch submission list by product id
   useEffect(() => {
     const fetchSubmissions = async () => {
       try {
-        const response = await fetchCSPReportByProductID(csp_code,product_id);
+        setLoading(true);
+        let response = date
+          ? await fetchCSPReportByProductIDandDate(csp_code, date,product_id)
+          : await fetchCSPReportByProductID(csp_code, product_id);
 
-        // Reorder response based on `sequence`
-        const sortedData = response.sort(
-          (a, b) => sequence.indexOf(a.form_id) - sequence.indexOf(b.form_id)
-        );
+        if (!response || response.length === 0) {
+          setSubmissions([]);
+          setTotalVisited(0);
+          return;
+        }
 
+        const sortedData = response.sort((a, b) => sequence.indexOf(a.form_id) - sequence.indexOf(b.form_id));
         setTotalVisited(sortedData.length);
-
-        console.log("Sorted Data:", sortedData); 
         setSubmissions(sortedData);
       } catch (err) {
         setError(err.message);
@@ -75,8 +91,11 @@ const FormResponses = () => {
         setLoading(false);
       }
     };
+
     fetchSubmissions();
-  }, [product_id, csp_code]);
+  }, [product_id, csp_code, date]);
+
+  
 
   //loading if data is not fetched
 
@@ -87,28 +106,28 @@ const FormResponses = () => {
 
   //group question accoring to parent id
 
-  const groupQuestions = (answers) => {
-    const questionMap = {};
-    const grouped = [];
+  // const groupQuestions = (answers) => {
+  //   const questionMap = {};
+  //   const grouped = [];
 
-    // First, initialize all questions in the map
-    answers.forEach((answer) => {
-      questionMap[answer.question_id] = { ...answer, subquestions: [] };
-    });
+  //   // First, initialize all questions in the map
+  //   answers.forEach((answer) => {
+  //     questionMap[answer.question_id] = { ...answer, subquestions: [] };
+  //   });
 
-    // Now, assign children to parents
-    answers.forEach((answer) => {
-      if (answer.parent_id && questionMap[answer.parent_id]) {
-        questionMap[answer.parent_id].subquestions.push(
-          questionMap[answer.question_id]
-        );
-      } else if (!answer.parent_id) {
-        grouped.push(questionMap[answer.question_id]);
-      }
-    });
+  //   // Now, assign children to parents
+  //   answers.forEach((answer) => {
+  //     if (answer.parent_id && questionMap[answer.parent_id]) {
+  //       questionMap[answer.parent_id].subquestions.push(
+  //         questionMap[answer.question_id]
+  //       );
+  //     } else if (!answer.parent_id) {
+  //       grouped.push(questionMap[answer.question_id]);
+  //     }
+  //   });
 
-    return grouped;
-  };
+  //   return grouped;
+  // };
 
   //download the response in pdf format
 

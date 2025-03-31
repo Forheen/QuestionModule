@@ -70,7 +70,7 @@ export default function Report_Page() {
 
   const handleCSPClick = async (code) => {
     try {
-      const response = await axios.post("http://testinterns-api.drishtee.in/api/forms/get-csp-report-by-product-id", {
+      const response = await axios.post("http://fms-api.drishtee.in/api/forms/get-csp-report-by-product-id", {
         csp_code: code,
         productID : selectedProduct,
       });

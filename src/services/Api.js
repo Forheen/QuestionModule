@@ -186,7 +186,7 @@ export const fetchCSPReportByProductIDandDate = async (code, date,productID) => 
     const response = await axios.post(`${BASE_URL}${GET_REPORT_BY_CSPCODE_DATE}`, {
       csp_code: code,
       date : date,
-      product_id: productID,
+      productID: productID,
 
     });
 

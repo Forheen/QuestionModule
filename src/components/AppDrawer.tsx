@@ -25,6 +25,7 @@ import EditNoteIcon from '@mui/icons-material/EditNote';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import HomeIcon from '@mui/icons-material/Home';
 import PageviewIcon from '@mui/icons-material/Pageview';
+import CreateIcon from '@mui/icons-material/Create';
 
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -285,6 +286,28 @@ export default function AppDrawer(props) {
                 </ListItemIcon>
                 <ListItemText primary={'Forms and Preview'} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
+              
+            </ListItem> 
+            <ListItem disablePadding sx={{ display: 'block' }} onClick={()=>{navigate('/update')}}>
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? 'initial' : 'center',
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : 'auto',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <CreateIcon />
+                </ListItemIcon>
+                <ListItemText primary={'Forms update'} sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+              
             </ListItem> 
             { open &&
             (

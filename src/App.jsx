@@ -14,6 +14,8 @@ import { useLocation } from "react-router-dom";
 import RenderForm from "./Pages/Form_render/Render";
 import FormPreview from "./components/Forms_and_preview/FormPreview";
 import FormResponses from "./Pages/Report/Report_url";
+import Revew_and_update from "./Pages/Update_form/Review_and_update";
+import FormPreviewUpdate from "./Pages/Update_form/Form_preview_update";
 
 function App() {
   const { alert, clearAlert } = useAlert();
@@ -59,8 +61,9 @@ function App() {
         {/* Route for form render */}
         <Route path="/render" element={<RenderForm />} />
         <Route path="/formpreview" element={<FormPreview />} />
-
         <Route path="/renderreport" element={<FormResponses />} />
+        <Route path="/update" element={<Revew_and_update />} />
+        <Route path="/formpreviewupdate" element={<FormPreviewUpdate />} />
       </Routes>
     </BrowserRouter>
   );

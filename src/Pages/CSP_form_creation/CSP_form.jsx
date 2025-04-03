@@ -130,12 +130,13 @@ function CSP_form() {
     if (token) {
       timeout = setTimeout(async () => {
         try {
-          const response = await fetchProduct(token);
+     	console.log("hkjhjh");
+	     const response = await fetchProduct(token);
           setProductData(response.products);
         } catch (err) {
           console.error("Error fetching product:", err);
         }
-      }, 300);
+      }, 1000);
     }
 
     return () => clearTimeout(timeout); // Cleanup

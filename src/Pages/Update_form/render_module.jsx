@@ -16,7 +16,7 @@ const QuestionRender = ({
   const [questionText, setQuestionText] = useState(question.question_text || "");
 
   const handleScoreChange = (id, value) => {
-    onScoreChange(id, Number(value));
+    onScoreChange(id, value === "" ? null : Number(value));
   };
 
   const handleImageUpload = (e, questionId) => {
@@ -37,7 +37,7 @@ const QuestionRender = ({
         type="number"
         id={`score-${id}`}
         className="score-input"
-        value={scores[id] || ""}
+        value={scores[id] ?? ""}
         onChange={(e) => handleScoreChange(id, e.target.value)}
       />
     </div>

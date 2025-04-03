@@ -21,13 +21,13 @@ const FormResponses = () => {
   const [totalVisited, setTotalVisited] = useState(0);
 
   const sequence = [
-    "47371f8d-cb1a-465d-a5b4-b906d8f657e3",
-    "6a893c36-a293-4cc4-88bd-8f88e99943bb",
-    "8ee21e46-ddcb-4ac5-b280-c54f22636dca",
-    "c5c3d43a-f2db-4d16-b923-40b66e872292",
-    "9de431cb-4ef5-413a-9814-291c56210406",
-    "3a38913a-0be5-4f01-b265-3a39a69e0473",
-  ];
+    "f6cf59f8-6ce7-423e-b90e-e90b8d5ec8fc", // FORM A
+        "bf926792-434a-4114-9092-193eac0807a5", // Infrastructure/Equipments/PART B
+        "ab553ee8-e40c-4a99-80d7-96ea6d46b070", // Availability/Updation of Registers
+        "3a0e1714-263b-490e-b71d-4c90724e57e5", // Process Control
+
+        "08aede56-905b-441f-9846-824ced8f89cc", // Business Parameters
+        "b4330dda-be5f-4e85-848c-566d4d04be29"  ];
 
   const groupQuestions = (answers) => {
     const questionMap = {};

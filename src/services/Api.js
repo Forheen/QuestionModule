@@ -183,7 +183,7 @@ export const fetchCSPReportByProductID = async (code, productID) => {
 
 export const fetchCSPReportByProductIDandDate = async (code, date,productID) => {
   try {
-    const response = await axios.post(`https://fms-api.drishtee.in/api/forms/get-csp-report-by-product-id`, {
+    const response = await axios.post(`https://fms-api.drishtee.in/api/forms/get-csp-report-by-month`, {
       csp_code: code,
       date : date,
       productID: productID,

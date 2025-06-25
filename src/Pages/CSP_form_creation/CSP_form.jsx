@@ -53,54 +53,7 @@ function CSP_form() {
 
     // Add other existing state variables...
 
-    useEffect(() => {
-      // Smooth scroll setup
-      const container = containerRef.current;
-      
-      const smoothScroll = {
-        ease: 0.9,
-        current: 0,
-        target: 0,
-        lastScroll: 0,
-      };
-  
-      gsap.set(container, {
-        force3D: true,
-      });
-  
-      const smoothScrolling = () => {
-        smoothScroll.current = gsap.utils.interpolate(
-          smoothScroll.current,
-          smoothScroll.target,
-          smoothScroll.ease
-        );
-        gsap.to(container, {
-          duration: 0.7,
-          y: -smoothScroll.current,
-          ease: 'power2.out'
-        });
-  
-        requestAnimationFrame(smoothScrolling);
-      };
-  
-      const handleWheel = (e) => {
-        smoothScroll.target = Math.max(
-          0,
-          Math.min(
-            smoothScroll.target + e.deltaY,
-            container.scrollHeight - window.innerHeight
-          )
-        );
-      };
-  
-      window.addEventListener('wheel', handleWheel);
-      smoothScrolling();
-  
-      return () => {
-        window.removeEventListener('wheel', handleWheel);
-      };
-    }, []);
-
+   
   useEffect(() => {
     const savedFormName = localStorage.getItem("formName");
     const savedFormVersion = localStorage.getItem("formVersion");
@@ -383,7 +336,7 @@ function CSP_form() {
                 {/* Question Block */}
                 <div className="questionBox">
                   <div className="questionIndex">
-                    <h3>{qIndex + 1}</h3>
+                    {qIndex + 1}
                   </div>
                   <div className="question">
                     <input
@@ -397,7 +350,7 @@ function CSP_form() {
                     />
                     <div className="optionBoxOrganised">
                       <div className="questionType">
-                        <h4 className="label">Question Type</h4>
+                        Question Type
                       </div>
                       <select
                         className="option"
@@ -429,7 +382,7 @@ function CSP_form() {
                   <div className="icon">
                     <img
                       className="icon-img"
-                      style={{ width: "30px", height: "30px" }}
+                      style={{ width: "15px", height: "15px" }}
                       src="../public/trash.png"
                       onClick={() => handleDeleteQuestion(qIndex, setQuestions)}
                       alt="Delete"
@@ -455,7 +408,7 @@ function CSP_form() {
                               <div key={sIndex} className="subQuestionBlock">
                                 <div className="subQuestionBox">
                                   <div className="subQuestionIndex">
-                                    <h3>{sIndex + 1}</h3>
+                                    {sIndex + 1}
                                   </div>
                                   <input
                                     className="questionInput"
@@ -484,7 +437,7 @@ function CSP_form() {
                                     <img
                                       className="icon-img"
                                       src="../public/trash.png"
-                                      style={{ width: "30px", height: "30px" }}
+                                      style={{ width: "15px", height: "15px" }}
                                       onClick={() =>
                                         handleDeleteSubQuestion(
                                           qIndex,
@@ -566,8 +519,8 @@ function CSP_form() {
                                             className="icon-img"
                                             src="../public/trash.png"
                                             style={{
-                                              width: "30px",
-                                              height: "30px",
+                                              width: "15px",
+                                              height: "15px",
                                             }}
                                             onClick={() =>
                                               handleDeleteOptionFromSubQuestion(
@@ -699,7 +652,7 @@ function CSP_form() {
                                     <img
                                       className="icon-img"
                                       src="../public/trash.png"
-                                      style={{ width: "30px", height: "30px" }}
+                                      style={{ width: "15px", height: "15px" }}
                                       onClick={() =>
                                         handleDeleteSubQuestion(
                                           qIndex,
@@ -781,8 +734,8 @@ function CSP_form() {
                                             className="icon-img"
                                             src="../public/trash.png"
                                             style={{
-                                              width: "30px",
-                                              height: "30px",
+                                              width: "15px",
+                                              height: "15px",
                                             }}
                                             onClick={() =>
                                               handleDeleteOptionFromSubQuestion(
